@@ -42,31 +42,31 @@ def maxima_ganancia_sofia(monedas):
     # la solucion optima para sofia esta en [0][n-1]
     return matriz_solucion[0][n - 1]
 
-monedas = obtener_monedas_de_archivo("TP2/5.txt")
+monedas = obtener_monedas_de_archivo("archivos_pruebas/5.txt")
 print("Valor máximo que sofia puede obtener 5 monedas:", maxima_ganancia_sofia(monedas))
 
-monedas = obtener_monedas_de_archivo("TP2/10.txt")
+monedas = obtener_monedas_de_archivo("archivos_pruebas/10.txt")
 print("Valor máximo que sofia puede obtener 10 monedas:", maxima_ganancia_sofia(monedas))
 
-monedas = obtener_monedas_de_archivo("TP2/20.txt")
+monedas = obtener_monedas_de_archivo("archivos_pruebas/20.txt")
 print("Valor máximo que sofia puede obtener 20 monedas:", maxima_ganancia_sofia(monedas))
 
-monedas = obtener_monedas_de_archivo("TP2/25.txt")
+monedas = obtener_monedas_de_archivo("archivos_pruebas/25.txt")
 print("Valor máximo que sofia puede obtener 25 monedas:", maxima_ganancia_sofia(monedas))
 
-monedas = obtener_monedas_de_archivo("TP2/50.txt")
+monedas = obtener_monedas_de_archivo("archivos_pruebas/50.txt")
 print("Valor máximo que sofia puede obtener 50 monedas:", maxima_ganancia_sofia(monedas))
 
-monedas = obtener_monedas_de_archivo("TP2/100.txt")
+monedas = obtener_monedas_de_archivo("archivos_pruebas/100.txt")
 print("Valor máximo que sofia puede obtener 100 monedas:", maxima_ganancia_sofia(monedas))
 
-monedas = obtener_monedas_de_archivo("TP2/1000.txt")
+monedas = obtener_monedas_de_archivo("archivos_pruebas/1000.txt")
 print("Valor máximo que sofia puede obtener 1000 monedas:", maxima_ganancia_sofia(monedas))
 
-monedas = obtener_monedas_de_archivo("TP2/2000.txt")
+monedas = obtener_monedas_de_archivo("archivos_pruebas/2000.txt")
 print("Valor máximo que sofia puede obtener 2000 monedas:", maxima_ganancia_sofia(monedas))
 
-monedas = obtener_monedas_de_archivo("TP2/5000.txt")
+monedas = obtener_monedas_de_archivo("archivos_pruebas/5000.txt")
 print("Valor máximo que sofia puede obtener 5000 monedas:", maxima_ganancia_sofia(monedas))
-monedas = obtener_monedas_de_archivo("TP2/10000.txt")
+monedas = obtener_monedas_de_archivo("archivos_pruebas/10000.txt")
 print("Valor máximo que sofia puede obtener 10000 monedas:", maxima_ganancia_sofia(monedas))

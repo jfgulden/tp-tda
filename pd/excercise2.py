@@ -8,65 +8,51 @@ def maxima_ganancia_sofia(monedas):
     n = len(monedas)
     
     #matriz_solucion: matriz_solucion[i][j] almacena la ganancia máxima que Sofia puede obtener en el rango [i, j]
-    matriz_solucion = [[0] * n for _ in range(n)] #INICIALIZO EN 0 LA MATRIZ
+    matriz_solucion = [[None] * n for _ in range(n)] #INICIALIZO EN 0 LA MATRIZ
 
     # Caso base: cuando solo hay una moneda disponible
     #inicializa la diagonal principal de la matriz_solucion
     for i in range(n):
         matriz_solucion[i][i] = monedas[i]
 
-    # Llenamos la matriz de manera bottom-up
-    for longitud in range(2, n + 1):  # longitud es el tamaño del rango actual
-        for i in range(n - longitud + 1):
-            j = i + longitud - 1  # Extremo derecho del rango
+    for i in range(n - 1):
+        matriz_solucion[i+1][i] = max(monedas[i], monedas[i+1])
 
-            # Opción 1: Sofia elige la moneda izquierda (monedas[i])
-            # Luego Mateo elige la mayor entre monedas[i + 1] y monedas[j]
-            if monedas[i + 1] >= monedas[j]:
-                ganancia_post_eleccion_mateo_i = matriz_solucion[i + 2][j] if i + 2 <= j else 0
-            else:
-                ganancia_post_eleccion_mateo_i = matriz_solucion[i + 1][j - 1] if i + 1 <= j - 1 else 0
-            opcion1 = monedas[i] + ganancia_post_eleccion_mateo_i
+    for i in range(2, n):  
+        k = i
+        for j in range(n - i):
 
-            # opcion 2 : Sofia elige la moneda derecha (monedas[j])
-            # Luego Mateo elige la mayor entre monedas[i] y monedas[j - 1]
-            if monedas[i] >= monedas[j - 1]:
-                ganancia_post_eleccion_mateo_j = matriz_solucion[i + 1][j - 1] if i + 1 <= j - 1 else 0
-            else:
-                ganancia_post_eleccion_mateo_j = matriz_solucion[i][j - 2] if i <= j - 2 else 0
-            opcion2 = monedas[j] + ganancia_post_eleccion_mateo_j
+            opt_1 = monedas[k] + (matriz_solucion[k-2][j] if monedas[k-1] >= monedas[j] else matriz_solucion[k-1][j+1])
+            opt_2 = monedas[j] + (matriz_solucion[k-1][j+1] if monedas[k] >= monedas[j+1] else matriz_solucion[k][j+2])
+            
+            matriz_solucion[k][j] = max(opt_1, opt_2)
+            k += 1
 
-            # Sofia elige la opción que le da la mayor ganancia
-            matriz_solucion[i][j] = max(opcion1, opcion2)
+    return matriz_solucion[n-1][0]
 
-    # la solucion optima para sofia esta en [0][n-1]
-    return matriz_solucion[0][n - 1]
 
-monedas = obtener_monedas_de_archivo("archivos_pruebas/5.txt")
-print("Valor máximo que sofia puede obtener 5 monedas:", maxima_ganancia_sofia(monedas))
-
-monedas = obtener_monedas_de_archivo("archivos_pruebas/10.txt")
+monedas = obtener_monedas_de_archivo("pd/archivos_pruebas/10.txt")
 print("Valor máximo que sofia puede obtener 10 monedas:", maxima_ganancia_sofia(monedas))
 
-monedas = obtener_monedas_de_archivo("archivos_pruebas/20.txt")
+monedas = obtener_monedas_de_archivo("pd/archivos_pruebas/20.txt")
 print("Valor máximo que sofia puede obtener 20 monedas:", maxima_ganancia_sofia(monedas))
 
-monedas = obtener_monedas_de_archivo("archivos_pruebas/25.txt")
+monedas = obtener_monedas_de_archivo("pd/archivos_pruebas/25.txt")
 print("Valor máximo que sofia puede obtener 25 monedas:", maxima_ganancia_sofia(monedas))
 
-monedas = obtener_monedas_de_archivo("archivos_pruebas/50.txt")
+monedas = obtener_monedas_de_archivo("pd/archivos_pruebas/50.txt")
 print("Valor máximo que sofia puede obtener 50 monedas:", maxima_ganancia_sofia(monedas))
 
-monedas = obtener_monedas_de_archivo("archivos_pruebas/100.txt")
+monedas = obtener_monedas_de_archivo("pd/archivos_pruebas/100.txt")
 print("Valor máximo que sofia puede obtener 100 monedas:", maxima_ganancia_sofia(monedas))
 
-monedas = obtener_monedas_de_archivo("archivos_pruebas/1000.txt")
+monedas = obtener_monedas_de_archivo("pd/archivos_pruebas/1000.txt")
 print("Valor máximo que sofia puede obtener 1000 monedas:", maxima_ganancia_sofia(monedas))
 
-monedas = obtener_monedas_de_archivo("archivos_pruebas/2000.txt")
+monedas = obtener_monedas_de_archivo("pd/archivos_pruebas/2000.txt")
 print("Valor máximo que sofia puede obtener 2000 monedas:", maxima_ganancia_sofia(monedas))
 
-monedas = obtener_monedas_de_archivo("archivos_pruebas/5000.txt")
+monedas = obtener_monedas_de_archivo("pd/archivos_pruebas/5000.txt")
 print("Valor máximo que sofia puede obtener 5000 monedas:", maxima_ganancia_sofia(monedas))
-monedas = obtener_monedas_de_archivo("archivos_pruebas/10000.txt")
+monedas = obtener_monedas_de_archivo("pd/archivos_pruebas/10000.txt")
 print("Valor máximo que sofia puede obtener 10000 monedas:", maxima_ganancia_sofia(monedas))

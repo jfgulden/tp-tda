@@ -37,23 +37,23 @@ Complejidad:
     - Temporal: O(n), siendo n la cantidad total de monedas.
     - Espacial: O(n), siendo n la cantidad total de monedas.
 """
-monedas = obtener_monedas_de_archivo("archivos_pruebas/20.txt")
+monedas = obtener_monedas_de_archivo("excercise_1/archivos_pruebas/20.txt")
 print(obtener_ganador(monedas))
 
-monedas = obtener_monedas_de_archivo("archivos_pruebas/25.txt")
+monedas = obtener_monedas_de_archivo("excercise_1/archivos_pruebas/25.txt")
 print(obtener_ganador(monedas))
 
-monedas = obtener_monedas_de_archivo("archivos_pruebas/50.txt")
+monedas = obtener_monedas_de_archivo("excercise_1/archivos_pruebas/50.txt")
 print(obtener_ganador(monedas))
 
-monedas = obtener_monedas_de_archivo("archivos_pruebas/100.txt")
+monedas = obtener_monedas_de_archivo("excercise_1/archivos_pruebas/100.txt")
 print(obtener_ganador(monedas))
 
-monedas = obtener_monedas_de_archivo("archivos_pruebas/1000.txt")
+monedas = obtener_monedas_de_archivo("excercise_1/archivos_pruebas/1000.txt")
 print(obtener_ganador(monedas))
 
-monedas = obtener_monedas_de_archivo("archivos_pruebas/10000.txt")
+monedas = obtener_monedas_de_archivo("excercise_1/archivos_pruebas/10000.txt")
 print(obtener_ganador(monedas))
 
-monedas = obtener_monedas_de_archivo("archivos_pruebas/20000.txt")
+monedas = obtener_monedas_de_archivo("excercise_1/archivos_pruebas/20000.txt")
 print(obtener_ganador(monedas))

@@ -1,165 +1,174 @@
-
 from typing import List
+from typing import Tuple
+import numpy as np
 
 
-def restricciones_validas(board: List[List[bool]], boats: List[int], res_rows: List[int], res_cols: List[int], curr_row: int, curr_col: int):
-
-    for i in range(curr_row + 1):
-        res_row = sum(board[i])
-        if i < curr_row and res_row != res_rows[i]:
-            return False  
-    
-        if curr_col == len(board[0]) - 1:
-            if res_row < res_rows[i]:
-                return False
-
-
-    for j in range(len(boards[0])):
-        occupied_col = sum(board[i][j] (for i in range(curr_row + 1) if j < curr_col else for i in range(curr_row)))
-        if occupied_col > res_cols[j]:
-            return False  
-
-        if curr_row == len(board) - 1 and j <= curr_col and occupied_col < res_cols[j]:
-            return False  
-
-    return True
-
-def validate_diagonal(board: List[List[bool]], i: int, j: int):
+def validar_diagonal(board: List[List[int]], i: int, j: int):
     if i+1 < len(board) and j+1 < len(board[0]):
         if board[i+1][j+1]:
             return False
 
-    return True
-
-def validate_adjacency_right(board: List[List[bool]], i: int, j: int):
-    
-    if i+1 < len(board):
-        if board[i+1][j]:
+    if i-1 >= 0 and j+1 < len(board[0]):
+        if board[i-1][j+1]:
             return False
 
-    return validate_diagonal(board, i, j)
-
-def validate_adjacency_down(board: List[List[bool]], i: int, j: int):
-    
-    if j+1 < len(board[0]):
-        if board[i][j+1]:
+    if i-1 >= 0 and j-1 >= 0:
+        if board[i-1][j-1]:
             return False
 
-    return validate_diagonal(board, i, j)
-
-
-def search_boat_to_right(board: List[List[bool]], i: int, j: int, boat_size: List[int]):
-    row_index = i   # Para verificar si hay barcos adyacentes
-    for k in range(j, len(board[0])):
-        if not board[i][k]:
-            break
-        board[i][k] = 0
-        boat_size[0] += 1
-        
-        if not validate_adjacency_right(board, row_index, k):
+    if i+1 < len(board) and j-1 >= 0:
+        if board[i+1][j-1]:
             return False
-        row_index += 1
 
-    return True
-
-def search_boat_to_bottom(board: List[List[bool]], i: int, j: int, boat_size: List[int]):
-    col_index = j   # Para verificar si hay barcos adyacentes
-    for k in range(i, len(board)):
-        if not board[k][j]:
-            break
-        board[k][j] = 0
-        boat_size[0] += 1
-
-        if not validate_adjacency_down(board, k, col_index):
-            return False
-        col_index += 1
 
     return True
 
 
-def validate_boat(board: List[List[bool]], boats, i: int, j: int):
-    boat_size = [1]
-    board[i][j] = 0
-    if j+1 < len(board[0]) and board[i][j+1]:
-        if not search_boat_to_right(board, i, j+1, boat_size):
-            return False
 
-    if i+1 < len(board) and board[i+1][j]:
-        if not search_boat_to_bottom(board, i+1, j, boat_size):
-            return False
-
-    if boat_size == 1:
-        if not validate_diagonal(board, i, j):
-            return False
-    
-    if boat_size[0] in boats:
-        boats.remove(boat_size[0])
-        return True
-    
-    return False
-
-def es_compatible(tablero: List[List[int]], boats: List[int], res_rows: List[int], res_cols: List[int], curr_row: int, curr_col: int):
-    if not restricciones_validas(tablero, boats, res_rows, res_cols, curr_row, curr_col):
+def puede_colocar_barco(board: List[List[int]], len_barco: int, demandas_filas: List[int], demandas_columnas: List[int], i: int, j: int, orientacion: str):
+    n = len(board)
+    m = len(board[0])
+    if board[i][j]:
         return False
 
-    for i in range(curr_row + 1):
-        if i < curr_row:
-            for j in range(len(board[i])):
-                if board[i][j]:
-                    if not validate_boat(board, boats, i, j):
-                        return False
-        else:
-            for j in range(curr_col + 1):
-                if board[i][j]:
-                    if not validate_boat(board, boats, i, j):
-                        return False
+    if orientacion == "Horizontal":
+        if j + len_barco >= m:
+            return False
 
+        if demandas_filas[i] < len_barco:
+            return False
 
-def colocar_barco_horizontalmente(tablero: List[List[int]], boat: int, i: int, j: int):
-    if j + boat >= len(tablero[0]):
-        return False
+        if j-1 >= 0 and board[i][j-1]: # Valido que no haya ningun barco en la posicion anterior
+            return False
+        for k in range(j, j + len_barco):
+            if demandas_columnas[k] < 1:
+                return False
 
-    for k in range(boat):
-        tablero[i][j+k] == 1
+            if not validar_diagonal(board, i, k):
+                return False
+
+            if i+1 < n and board[i+1][k]:
+                return False
+            if i-1 >= 0 and board[i-1][k]:
+                return False
+
+        if j+1 < m and board[i][j+1]: # Valido que no haya ningun barco en la posicion siguiente
+            return False
+
+    if orientacion == "Vertical":
+        if i + len_barco >= n:
+            return False
+
+        if demandas_columnas[j] < len_barco:
+            return False
+
+        if i-1 >= 0 and board[i-1][j]: # Valido que no haya ningun barco en la posicion anterior
+            return False
+        for k in range(i, i + len_barco):
+            if demandas_filas[k] < 1:
+                return False
+
+            if not validar_diagonal(board, k, j):
+                return False
+
+            if k+1 < m and board[i][k+1]:
+                return False
+
+            if k-1 >= 0 and board[i][k-1]:
+                return False
+
+        if i+1 < n and board[i+1][k]: # Valido que no haya ningun barco en la posicion siguiente
+            return False
 
     return True
+            
 
-def colocar_barco_verticalmente(tablero: List[List[int]], boat: int, i: int, j: int):
-    if i + boat >= len(tablero):
-        return False
+def colocar_barco(board: List[List[int]], len_barco: int, i: int, j: int, orientacion: str):
 
-    for k in range(boat):
-        tablero[i+k][j] == 1
+    if orientacion == "Horizontal":
+        for k in range(j, j + len_barco):
+            board[i][k] = 1
 
-    return True
+    if orientacion == "Vertical":
+        for k in range(i, i + len_barco):
+            board[k][j] = 1
+            
+def remover_barco(board: List[List[int]], len_barco: int, i: int, j: int, orientacion: str):
+    if orientacion == "Horizontal":
+        for k in range(j, j + len_barco):
+            board[i][k] = 0
 
-def batalla_naval_BT(tablero: List[List[int]], boats: List[int], res_rows: List[int], res_cols: List[int], i: int, j: int):
-    if not es_compatible(tablero, boats, res_rows, res_cols, i, j):
-        return False
-    if len(boats) == 0:
-        return True
+    if orientacion == "Vertical":
+        for k in range(i, i + len_barco):
+            board[k][j] = 0
+            
+def actualizar_demandas(len_barco: int, i: int, j: int, orientacion: str, demandas_filas: List[int], demandas_columnas: List[int]):
+    n = len(demandas_filas)
+    m = len(demandas_columnas)
+    
+    demandas_filas = demandas_filas.copy()
+    demandas_columnas = demandas_columnas.copy()
+    
+    if orientacion == "Horizontal":
+        for k in range(j, j + len_barco):
+            demandas_filas[i] -= 1
+            demandas_columnas[k] -= 1
 
-    ## Probar con cada uno de los barcos disponibles
-    ## Por cada barco: Probar colocarlo horizontalmente o verticalmente
-    for b in boats:
-        boats.remove(b)
-        if colocar_barco_horizontalmente(tablero, b, i, j):
-            j += b
-            if batalla_naval_BT(tablero, boats, res_rows, res_cols, i, j):
-                return True
+    if orientacion == "Vertical":
+        for k in range(i, i + len_barco):
+            demandas_filas[k] -= 1
+            demandas_columnas[j] -= 1
+    
+    return demandas_filas, demandas_columnas
 
-        if colocar_barco_verticalmente(tablero, b, i, j):
-            i += b
-            if batalla_naval_BT(tablero, boats, res_rows, res_cols, i, j):
-                return True
-        
-        boats.append(b)
+    
+def batalla_naval_BT(board: List[List[int]], boats: List[int], demandas_filas: List[int], demandas_columnas: List[int], mejor_solucion: List[Tuple[List[List[int]], int]], barco_actual: int = 0):
+    n = len(demandas_filas)
+    m = len(demandas_columnas)
+    demanda_incumplida = sum(demandas_filas) + sum(demandas_columnas)
 
-    return False
+    if mejor_solucion[0] is None or demanda_incumplida < mejor_solucion[0][1]:
+        mejor_solucion[0] = (board.copy(), demanda_incumplida)
+    
+    if not boats or barco_actual >= len(boats):
+        return
+
+    barco = boats[barco_actual]
+    barco_largo = barco
+    
+    for orientacion in ['Horizontal', 'Vertical']:
+        for i in range(n):
+            for j in range(m):
+                if puede_colocar_barco(board, barco_largo, demandas_filas, demandas_columnas, i, j, orientacion):
+                    colocar_barco(board, barco_largo, i, j, orientacion)
+                    nueva_demanda_filas, nueva_demanda_columnas = actualizar_demandas(barco_largo, i, j, orientacion, demandas_filas, demandas_columnas)
+                    batalla_naval_BT(board, boats, nueva_demanda_filas, nueva_demanda_columnas, mejor_solucion, barco_actual+1)
+                    remover_barco(board, barco_largo, i, j, orientacion)
+    
+    # Intentar omitir el barco actual
+    batalla_naval_BT(board, boats, demandas_filas, demandas_columnas, mejor_solucion, barco_actual+1)
+
+def batalla_naval(board: List[List[int]], boats: List[int], demandas_filas: List[int], demandas_columnas: List[int]):
+    mejor_solucion = [None]
+    batalla_naval_BT(board, boats, demandas_filas, demandas_columnas, mejor_solucion)
+    return mejor_solucion[0]
 
 
-def batalla_naval(tablero: List[List[int]], boats: List[int], res_rows: List[int], res_cols: List[int]):
+def generar_tablero(n, m, boats, demandas_filas, demandas_columnas):
+    # Tablero vacío
+    board = np.zeros((n, m), dtype=int)
+    # Encontrar la mejor solución
+    mejor_solucion = batalla_naval(board, boats, demandas_filas, demandas_columnas)
+    if not mejor_solucion:
+        return None, None
+    return mejor_solucion[0], mejor_solucion[1]
 
-    return batalla_naval_BT(tablero, boats, res_rows, res_cols, 0, 0)
+n, m = 5, 5  # Dimensiones del tablero
+boats = [3, 2, 2, 1]  # Longitudes de los boats
+demandas_filas = [2, 2, 3, 1, 3]  # Demanda de cada fila
+demandas_columnas = [1, 3, 2, 2, 2]  # Demanda de cada columna
 
-tablero = [[0] * n for _ in range(n)]
+mejor_tablero, demanda_minima = generar_tablero(n, m, boats, demandas_filas, demandas_columnas)
+print("Mejor disposición de boats:")
+print(mejor_tablero)
+print("Demanda incumplida mínima:", demanda_minima)

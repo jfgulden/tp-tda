@@ -52,7 +52,7 @@ def puede_colocar_barco(board: List[List[int]], len_barco: int, demandas_filas: 
             if i-1 >= 0 and board[i-1][k]:
                 return False
 
-        if j+1 < m and board[i][j+1]: # Valido que no haya ningun barco en la posicion siguiente
+        if j + len_barco < m and board[i][j + len_barco]: # Valido que no haya ningun barco en la posicion siguiente
             return False
 
     if orientacion == "Vertical":
@@ -65,25 +65,28 @@ def puede_colocar_barco(board: List[List[int]], len_barco: int, demandas_filas: 
         if i-1 >= 0 and board[i-1][j]: # Valido que no haya ningun barco en la posicion anterior
             return False
         for k in range(i, i + len_barco):
+            if len_barco == 1:
+                print(f"Validando k: {k}, i {i}, j {j}, len_barco {len_barco}, board[i][k+1]: {board[i][k+1]} and board[i][k-1]: {board[i][k-1]}") 
             if demandas_filas[k] < 1:
                 return False
 
             if not validar_diagonal(board, k, j):
                 return False
 
-            if k+1 < m and board[i][k+1]:
+            if j+1 < m and board[k][j+1]:
                 return False
 
-            if k-1 >= 0 and board[i][k-1]:
+            if j-1 >= 0 and board[k][j-1]:
                 return False
 
-        if i+1 < n and board[i+1][k]: # Valido que no haya ningun barco en la posicion siguiente
+        if i+len_barco < n and board[i+len_barco][j]: # Valido que no haya ningun barco en la posicion siguiente
             return False
 
     return True
             
 
 def colocar_barco(board: List[List[int]], len_barco: int, i: int, j: int, orientacion: str):
+    print(f"Colocando barco de longitud {len_barco} en ({i}, {j}) orientación {orientacion}")
 
     if orientacion == "Horizontal":
         for k in range(j, j + len_barco):
@@ -94,6 +97,8 @@ def colocar_barco(board: List[List[int]], len_barco: int, i: int, j: int, orient
             board[k][j] = 1
             
 def remover_barco(board: List[List[int]], len_barco: int, i: int, j: int, orientacion: str):
+    print(f"Removiendo barco de longitud {len_barco} en ({i}, {j}) orientación {orientacion}")
+
     if orientacion == "Horizontal":
         for k in range(j, j + len_barco):
             board[i][k] = 0
@@ -126,8 +131,9 @@ def batalla_naval_BT(board: List[List[int]], boats: List[int], demandas_filas: L
     n = len(demandas_filas)
     m = len(demandas_columnas)
     demanda_incumplida = sum(demandas_filas) + sum(demandas_columnas)
-
+    print(board)
     if mejor_solucion[0] is None or demanda_incumplida < mejor_solucion[0][1]:
+        print(board)
         mejor_solucion[0] = (board.copy(), demanda_incumplida)
     
     if not boats or barco_actual >= len(boats):
@@ -164,9 +170,9 @@ def generar_tablero(n, m, boats, demandas_filas, demandas_columnas):
     return mejor_solucion[0], mejor_solucion[1]
 
 n, m = 5, 5  # Dimensiones del tablero
-boats = [3, 2, 2, 1]  # Longitudes de los boats
-demandas_filas = [2, 2, 3, 1, 3]  # Demanda de cada fila
-demandas_columnas = [1, 3, 2, 2, 2]  # Demanda de cada columna
+boats = [4, 3, 2, 2, 1]  # Longitudes de los boats
+demandas_filas = [6, 6, 6, 6, 6]  # Demanda de cada fila
+demandas_columnas = [6, 6, 6, 6, 6]  # Demanda de cada columna
 
 mejor_tablero, demanda_minima = generar_tablero(n, m, boats, demandas_filas, demandas_columnas)
 print("Mejor disposición de boats:")

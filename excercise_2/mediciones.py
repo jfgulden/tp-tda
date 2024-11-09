@@ -4,7 +4,7 @@ import os
 import numpy as np
 import matplotlib.pyplot as plt
 import scipy as sp
-from greedy import obtener_ganador
+from pd import maxima_ganancia_sofia
 
 
 
@@ -50,12 +50,12 @@ def get_random_array(size: int):
 # Tamaño mínimo=100, tamaño máximo=10kk, cantidad de puntos=20
 x = np.linspace(100, 10_000_000, 20).astype(int)
 
-results = time_algorithm(obtener_ganador, x, lambda s: [get_random_array(s)])
+results = time_algorithm(maxima_ganancia_sofia, x, lambda s: [get_random_array(s)])
 
 ax: plt.Axes
 fig, ax = plt.subplots()
 ax.plot(x, [results[i] for i in x], label="Medición")
-ax.set_title('Tiempo de ejecución de monedas greedy')
+ax.set_title('Tiempo de ejecución de monedas programacion dinamica')
 ax.set_xlabel('Tamaño del array')
 ax.set_ylabel('Tiempo de ejecución (s)')
 None
@@ -64,15 +64,15 @@ None
 # La función que ajustamos es c1 * x + c2
 # donde c1 y c2 son los coeficientes que queremos encontrar
 
-f = lambda x, c1, c2: c1 * x + c2 
+f = lambda x, c1, c2: c1 * x * x + c2 
 
 c, pcov = sp.optimize.curve_fit(f, x, [results[n] for n in x])
 
 print(f"c_1 = {c[0]}, c_2 = {c[1]}")
-r = np.sum((c[0] * x + c[1] - [results[n] for n in x])**2)
+r = np.sum((c[0] * x * x + c[1] - [results[n] for n in x])**2)
 print(f"Error cuadrático total: {r}")
 
-ax.plot(x, [c[0] * n + c[1] for n in x], 'r--', label="Ajuste")
+ax.plot(x, [c[0] * n * n + c[1] for n in x], 'r--', label="Ajuste")
 ax.legend()
 fig
 plt.savefig("excercise_1/mediciones.png")
@@ -82,7 +82,7 @@ plt.savefig("excercise_1/mediciones.png")
 
 ax: plt.Axes
 fig, ax = plt.subplots()
-errors = [np.abs(c[0] * n + c[1] - results[n]) for n in x]
+errors = [np.abs(c[0] * n * n + c[1] - results[n]) for n in x]
 ax.plot(x, errors)
 ax.set_title('Error de ajuste')
 ax.set_xlabel('Tamaño del array')

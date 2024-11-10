@@ -1,3 +1,4 @@
+# Validador eficiente para demostrar que el problema es NP
 
 '''
 Requisitos:
@@ -121,7 +122,7 @@ def search_boat_to_right(board: List[List[bool]], i: int, j: int, boat_size: Lis
     for k in range(j, len(board[0])):
         if not board[i][k]:
             break
-        board[i][k] = False
+        board[i][k] = 0
         boat_size[0] += 1
         
         if not validate_adjacency_right(board, i, k):
@@ -133,7 +134,7 @@ def search_boat_to_bottom(board: List[List[bool]], i: int, j: int, boat_size: Li
     for k in range(i, len(board)):
         if not board[k][j]:
             break
-        board[k][j] = False
+        board[k][j] = 0
         boat_size[0] += 1
 
         if not validate_adjacency_down(board, k, j):
@@ -144,7 +145,7 @@ def search_boat_to_bottom(board: List[List[bool]], i: int, j: int, boat_size: Li
 
 def validate_boat(board: List[List[bool]], boats, i: int, j: int):
     boat_size = [1]
-    board[i][j] = False
+    board[i][j] = 0
     if j+1 < len(board[0]) and board[i][j+1]:
         if not search_boat_to_right(board, i, j+1, boat_size):
             print('Barco adyacente a la derecha ' + str(i) + ' ' + str(j))
@@ -167,8 +168,21 @@ def validate_boat(board: List[List[bool]], boats, i: int, j: int):
     print('Barco de tamaño incorrecto')
     return False
 
+
+
     
-def naval_battle_validator(board: List[List[bool]], boats: List[int], res_rows: List[int], res_cols: List[int]):
+def naval_battle_validator(board: List[List[int]], boats: List[int], res_rows: List[int], res_cols: List[int]):
+    if len(board) == 0:
+        return False
+
+    if len(board[0]) == 0:
+        return False
+
+    if len(res_rows) == 0 or len(res_cols) == 0 or len(boatds) == 0:
+        return False
+
+    if sum(boats) > len(board) * len(board[0]): # Si la dimension del tablero es menor que la cantidad de posiciones a ocupar, no es valido.
+        return False
 
     if not validate_restrictions(board, boats, res_rows, res_cols):
         # print('No se cumplen las restricciones')
@@ -218,10 +232,10 @@ print()
 
 # Test3: Caso 5x5 con 3 barcos
 board = [
-    [True, False, False, False, True],
-    [False, False, False, False, True],
-    [False, False, False, False, True],
-    [False, True, True, False, True]
+    [1, 0, 0, 0, 1],
+    [0, 0, 0, 0, 1],
+    [0, 0, 0, 0, 1],
+    [0, 1, 1, 0, 1]
 ]
 boats = [1, 2, 4]
 res_rows = [2,1,1,3]
@@ -273,10 +287,10 @@ print()
 
 # Test5: Caso 5x5 con 4 barcos, hay un barco de más (1,2)
 board = [
-    [True, False, False, False, True],
-    [False, False, True, False, True],
-    [False, False, False, False, True],
-    [False, True, True, False, True]
+    [1, 0, 0, 0, 1],
+    [0, 1, 0, 0, 1],
+    [0, 0, 0, 0, 1],
+    [0, 1, 1, 0, 1]
 ]
 boats = [1, 2, 4]
 res_rows = [2,2,1,3]
@@ -288,24 +302,22 @@ print()
 
 # Test6: Caso 5x5 con 4 barcos, no se cumplen las restricciones de columnas
 board = [
-    [True, False, False, False, True],
-    [False, False, True, False, True],
-    [False, False, False, False, True],
-    [False, True, True, False, True]
+    [1, 0, 0, 0, 1],
+    [0, 1, 0, 0, 1],
+    [0, 0, 0, 0, 1],
+    [0, 1, 1, 0, 1]
 ]
 boats = [1, 2, 4, 1]
 res_rows = [2,2,1,3]
 res_cols = [1,2,1,0,5]
 print("Test6: False, No se cumplen las restricciones de columnas")
 print(naval_battle_validator(board, boats, res_rows, res_cols)) # False: No se cumplen las restricciones de columnas
-print()
 
-# Test7: No se colocaron todos los barcos
 board = [
-    [True, False, False, False, True],
-    [False, False, False, False, True],
-    [False, False, False, False, True],
-    [False, True, True, False, True]
+    [1, 0, 0, 0, 1],
+    [0, 1, 0, 0, 1],
+    [0, 0, 0, 0, 1],
+    [0, 1, 1, 0, 1]
 ]
 boats = [1, 2, 4, 1]
 res_rows = [2,1,1,3]
@@ -319,10 +331,10 @@ print()
 
 # Test8: Hay un barco diagonal al 0,0
 board = [
-    [True, False, False, False, True],
-    [False, True, False, False, True],
-    [False, False, False, False, True],
-    [False, True, True, False, True]
+    [1, 0, 0, 0, 1],
+    [0, 1, 0, 0, 1],
+    [0, 0, 0, 0, 1],
+    [0, 1, 1, 0, 1]
 ]
 boats = [1, 2, 4]
 res_rows = [2,2,1,4]
@@ -360,9 +372,10 @@ print()
 # Test11: Hay dos barcos de tamaño incorrecto
 # Las sumas dan bien. Solo los largos de cada uno estan mal
 board = [
-    [True, False, False],
-    [True, False, True],
-    [True, False, False],
+    [1, 0, 0, 0, 1],
+    [0, 1, 0, 0, 1],
+    [0, 0, 0, 0, 1],
+    [0, 1, 1, 0, 1]
 ]
 boats = [2, 2]
 res_rows = [1,2,1]
@@ -373,9 +386,11 @@ print()
 
 # Test12: Hay 2 barcos tamaño 1 adyacentes
 board = [
-    [True, True, False],
-    [False, False, False],
-    [False, False, False],
+    [1, 0, 0, 0, 1],
+    [0, 0, 1, 0, 1],
+    [0, 0, 0, 0, 1],
+    [0, 1, 1, 0, 1],
+    [0, 0, 0, 0, 0]
 ]
 
 boats = [1, 1]
@@ -388,15 +403,4 @@ print()
 
 #TODO: Analizar complejidad -> Explicar por que es polinomial 
 
-# Test9: Hay un barco adyacente a la derecha
-board = [
-    [False, False, True],
-    [True, True, False],
-    [False, False, False]
-]
-boats = [2, 1]
-res_rows = [1,2,0]
-res_cols = [1,1,1]
-print("Test9: False, Hay un barco adyacente a la derecha")
-print(naval_battle_validator(board, boats, res_rows, res_cols)) # False: Hay un barco adyacente a la derecha
-print()
+

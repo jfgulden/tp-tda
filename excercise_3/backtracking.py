@@ -32,7 +32,7 @@ def puede_colocar_barco(board: List[List[int]], len_barco: int, demandas_filas: 
         return False
 
     if orientacion == "Horizontal":
-        if j + len_barco >= m:
+        if j + len_barco - 1 >= m:
             return False
 
         if demandas_filas[i] < len_barco:
@@ -40,6 +40,7 @@ def puede_colocar_barco(board: List[List[int]], len_barco: int, demandas_filas: 
 
         if j-1 >= 0 and board[i][j-1]: # Valido que no haya ningun barco en la posicion anterior
             return False
+
         for k in range(j, j + len_barco):
             if demandas_columnas[k] < 1:
                 return False
@@ -56,7 +57,7 @@ def puede_colocar_barco(board: List[List[int]], len_barco: int, demandas_filas: 
             return False
 
     if orientacion == "Vertical":
-        if i + len_barco >= n:
+        if i + len_barco - 1 >= n:
             return False
 
         if demandas_columnas[j] < len_barco:
@@ -64,6 +65,7 @@ def puede_colocar_barco(board: List[List[int]], len_barco: int, demandas_filas: 
 
         if i-1 >= 0 and board[i-1][j]: # Valido que no haya ningun barco en la posicion anterior
             return False
+
         for k in range(i, i + len_barco):
             if demandas_filas[k] < 1:
                 return False
@@ -129,6 +131,7 @@ def batalla_naval_BT(board: List[List[int]], boats: List[int], demandas_filas: L
     demanda_incumplida = sum(demandas_filas) + sum(demandas_columnas)
 
     if mejor_solucion[0] is None or demanda_incumplida < mejor_solucion[0][1]:
+        print("entra")
         mejor_solucion[0] = (board.copy(), demanda_incumplida)
     
     if not boats or barco_actual >= len(boats):
@@ -165,7 +168,7 @@ def generar_tablero(n, m, boats, demandas_filas, demandas_columnas):
     return mejor_solucion[0], mejor_solucion[1]
 
 n, m = 5, 5  # Dimensiones del tablero
-boats = [4, 3, 2, 2, 1]  # Longitudes de los boats
+boats = [5, 5, 5, 5, 5]  # Longitudes de los boats
 demandas_filas = [6, 6, 6, 6, 6]  # Demanda de cada fila
 demandas_columnas = [6, 6, 6, 6, 6]  # Demanda de cada columna
 

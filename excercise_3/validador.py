@@ -9,24 +9,6 @@ Requisitos:
 '''
 from typing import List
 
-# def validate_adjacency(board: List[List[bool]]):
-#     for i in range(len(board)):
-#         for j in range(len(board[i])):
-#             if not board[i][j]:
-#                 continue
-#             vertical = False
-#             horizontal = False
-#             if not validate_diagonals(board, i, j):
-#                 return False
-            
-#             vertical = is_vertical(board, i, j)
-#             horizontal = is_horizontal(board, i, j)
-
-#             if vertical and horizontal:
-#                 return False
-            
-#     return True
-
 def validate_diagonals(board: List[List[bool]], i: int, j: int):
     if i+1 < len(board) and j+1 < len(board[0]):
         if board[i+1][j+1]:
@@ -67,8 +49,8 @@ def validate_restrictions(board: List[List[bool]], boats: List[int], res_rows: L
             return False  
 
     # Verificar restricciones de columnas
-    for j in range(len(board[0])):
-        occupied_col = sum(board[i][j] for i in range(len(board)))
+    for j in range(len(board[0])):  # O(m)
+        occupied_col = sum(board[i][j] for i in range(len(board)))  # O(n)
         if occupied_col != res_cols[j]:
             print('Columna ' + str(j) + ' no cumple con la restricción') 
             return False 
@@ -131,7 +113,7 @@ def search_boat_to_right(board: List[List[bool]], i: int, j: int, boat_size: Lis
     return True
 
 def search_boat_to_bottom(board: List[List[bool]], i: int, j: int, boat_size: List[int]):
-    for k in range(i, len(board)):
+    for k in range(i, len(board)):  # O(n)
         if not board[k][j]:
             break
         board[k][j] = 0
@@ -147,22 +129,19 @@ def validate_boat(board: List[List[bool]], boats, i: int, j: int):
     boat_size = [1]
     board[i][j] = 0
     if j+1 < len(board[0]) and board[i][j+1]:
-        if not search_boat_to_right(board, i, j+1, boat_size):
-            print('Barco adyacente a la derecha ' + str(i) + ' ' + str(j))
+        if not search_boat_to_right(board, i, j+1, boat_size):  # O(m)
             return False
 
     if i+1 < len(board) and board[i+1][j]:
-        if not search_boat_to_bottom(board, i+1, j, boat_size):
-            print('Barco adyacente abajo ' + str(i) + ' ' + str(j))
+        if not search_boat_to_bottom(board, i+1, j, boat_size): # O(n)
             return False
 
-    if boat_size[0] == 1:
-        if not validate_diagonal(board, i, j):
-            print('Barco adyacente en diagonal ' + str(i) + ' ' + str(j))
+    if boat_size == 1:
+        if not validate_diagonal(board, i, j):  # O(1)
             return False
     
     if boat_size[0] in boats:
-        boats.remove(boat_size[0])
+        boats.remove(boat_size[0])  # O(k)
         return True
     
     print('Barco de tamaño incorrecto')
@@ -178,59 +157,38 @@ def naval_battle_validator(board: List[List[int]], boats: List[int], res_rows: L
     if len(board[0]) == 0:
         return False
 
-    if len(res_rows) == 0 or len(res_cols) == 0 or len(boatds) == 0:
+    if len(res_rows) == 0 or len(res_cols) == 0 or len(boats) == 0:
         return False
 
     if sum(boats) > len(board) * len(board[0]): # Si la dimension del tablero es menor que la cantidad de posiciones a ocupar, no es valido.
         return False
 
     if not validate_restrictions(board, boats, res_rows, res_cols):
-        # print('No se cumplen las restricciones')
         return False
 
-    for i in range(len(board)):
-        for j in range(len(board[i])):
+    for i in range(len(board)): # O(n)
+        for j in range(len(board[i])):  # O(m)
             if board[i][j]:
-                if not validate_boat(board, boats, i, j):
+                if not validate_boat(board, boats, i, j):   # O(m + k) or O(n + k)
                     return False
 
     if len(boats) > 0:  # Si no se colocaron todos los barcos
-        print('No se colocaron todos los barcos')
         return False
 
     return True
 
-############################################################################################################
+'''
+Analisis de complejidad:
+n: número de filas
+m: número de columnas
+k: número de barcos
+- La función validate_restrictions tiene una complejidad de O(m x n) por la validación de las restricciones de filas y columnas.
+- La función validate_boat tiene una complejidad de O(m + k) ó de O(n + k), dependiendo de cual sea mayor.
+Por lo tanto, la complejidad total de la función naval_battle_validator es de O(m x n x (m + k)) ó de O(m x n x (n + k)), dependiendo de cual sea mayor (n ó m).
+Esto equivale a una complejidad de O(m^2 x n + m x n x k) ó de O(m x n^2 + m x n x k), por lo que la complejidad es polinomial.
+'''
 
-##########
-# Tests #
-#########        
-
-####################
-# Casos positivos #
-###################
-
-# Test1: Caso base 1x1
-
-board = [[True]]
-boats = [1]
-res_rows = [1]
-res_cols = [1]
-print("Test1: True, caso base 1x1")
-print(naval_battle_validator(board, boats, res_rows, res_cols)) # True
-print()
-
-# Test2: Caso base 1x1 vacio
-board = [[False]]
-boats = []
-res_rows = [0]
-res_cols = [0]
-print("Test2: True, caso base 1x1 vacio")
-print(naval_battle_validator(board, boats, res_rows, res_cols)) # True
-print()
-
-
-# Test3: Caso 5x5 con 3 barcos
+# Test cases
 board = [
     [1, 0, 0, 0, 1],
     [0, 0, 0, 0, 1],
@@ -246,11 +204,11 @@ print()
 
 # Test4: Caso 5x5 con 4 barcos
 board = [
-    [True, False, False, False, True],
-    [False, False, True, False, True],
-    [False, False, False, False, True],
-    [False, True, True, False, True],
-    [False, False, False, False, False]
+    [1, 0, 0, 0, 1],
+    [0, 0, 1, 0, 1],
+    [0, 0, 0, 0, 1],
+    [0, 1, 1, 0, 1],
+    [0, 0, 0, 0, 0]
 ]
 boats = [1, 2, 4, 1]
 res_rows = [2,2,1,3,0]
@@ -345,9 +303,9 @@ print()
 
 # Test9: Hay un barco adyacente a la derecha
 board = [
-    [False, False, True],
-    [True, True, True],
-    [False, False, True]
+    [0, 0, 1],
+    [1, 1, 1],
+    [0, 0, 1]
 ]
 boats = [2, 3]
 res_rows = [1,3,1]
@@ -358,9 +316,9 @@ print()
 
 # Test10: Hay un barco adyacente abajo
 board = [
-    [True, True, True],
-    [False, True, False],
-    [False, True, False]
+    [1, 1, 1],
+    [0, 1, 0],
+    [0, 1, 0]
 ]
 boats = [2, 3]
 res_rows = [3,1,1]
@@ -399,8 +357,4 @@ res_cols = [1,1,0]
 print("Test12: False, Hay 2 barcos tamaño 1 adyacentes")
 print(naval_battle_validator(board, boats, res_rows, res_cols)) # False: Hay 2 barcos tamaño 1 adyacentes
 print()
-
-
-#TODO: Analizar complejidad -> Explicar por que es polinomial 
-
 

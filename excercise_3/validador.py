@@ -41,10 +41,13 @@ def is_horizontal(board: List[List[bool]], i: int, j: int):
     return False
 
 def validate_restrictions(board: List[List[bool]], boats: List[int], res_rows: List[int], res_cols: List[int]):
+    """
+    Complejidad: O(m x n) + O(m x n) + O(m x n) = O(m x n)
+    """
 
     # Verificar restricciones de filas
-    for i in range(len(board)):
-        if sum(board[i]) != res_rows[i]:
+    for i in range(len(board)): # O(n)
+        if sum(board[i]) != res_rows[i]:    # O(m)
             print('Fila ' + str(i) + ' no cumple con la restricción')
             return False  
 
@@ -56,7 +59,7 @@ def validate_restrictions(board: List[List[bool]], boats: List[int], res_rows: L
             return False 
 
     #verificar que hay cantidad correcta de casilleros ocupados
-    occupied_cells = sum(sum(row) for row in board)
+    occupied_cells = sum(sum(row) for row in board) # O(m x n)
     if occupied_cells != sum(boats):
         print('Cantidad de casilleros ocupados incorrecta')
         return False
@@ -65,6 +68,10 @@ def validate_restrictions(board: List[List[bool]], boats: List[int], res_rows: L
 
 
 def validate_diagonal(board: List[List[bool]], i: int, j: int):
+    """
+    Complejidad: O(1)
+    """
+
     if i+1 < len(board) and j+1 < len(board[0]):
         if board[i+1][j+1]:
             return False
@@ -84,56 +91,77 @@ def validate_diagonal(board: List[List[bool]], i: int, j: int):
     return True
 
 def validate_adjacency_right(board: List[List[bool]], i: int, j: int):
+    """
+    Complejidad: O(1)
+    """
     
-    if i+1 < len(board):
-        if board[i+1][j]:
-            return False
+    if i+1 < len(board) and board[i+1][j]:
+        return False
+    
+    if i-1 >= 0 and board[i-1][j]:
+        return False
 
     return validate_diagonal(board, i, j)
 
 def validate_adjacency_down(board: List[List[bool]], i: int, j: int):
+    """
+    Complejidad: O(1)
+    """
     
-    if j+1 < len(board[0]):
-        if board[i][j+1]:
-            return False
+    if j+1 < len(board[0]) and board[i][j+1]:
+        return False
+
+    if j-1 >= 0 and board[i][j-1]:
+        return False
 
     return validate_diagonal(board, i, j)
 
 
 def search_boat_to_right(board: List[List[bool]], i: int, j: int, boat_size: List[int]):
-    for k in range(j, len(board[0])):
+    """
+    Complejidad: O(m)
+    """
+    for k in range(j, len(board[0])):   # O(m)
         if not board[i][k]:
             break
-        board[i][k] = 0
-        boat_size[0] += 1
         
         if not validate_adjacency_right(board, i, k):
             return False
 
+        board[i][k] = 0
+        boat_size[0] += 1
+
     return True
 
 def search_boat_to_bottom(board: List[List[bool]], i: int, j: int, boat_size: List[int]):
+    """
+    Complejidad: O(n)
+    """
     for k in range(i, len(board)):  # O(n)
         if not board[k][j]:
             break
-        board[k][j] = 0
-        boat_size[0] += 1
 
         if not validate_adjacency_down(board, k, j):
             return False
+
+        board[k][j] = 0
+        boat_size[0] += 1
 
     return True
 
 
 def validate_boat(board: List[List[bool]], boats, i: int, j: int):
+    """
+    Complejidad: O(max(m, n) + k), porque se puede llamar a search_boat_to_right o search_boat_to_bottom, pero no a ambos.
+    """
     boat_size = [1]
     board[i][j] = 0
     if j+1 < len(board[0]) and board[i][j+1]:
-        if not search_boat_to_right(board, i, j+1, boat_size):  # O(m)
+        if not search_boat_to_right(board, i, j, boat_size):  # O(m)
             return False
 
     if i+1 < len(board) and board[i+1][j]:
-        if not search_boat_to_bottom(board, i+1, j, boat_size): # O(n)
+        if not search_boat_to_bottom(board, i, j, boat_size): # O(n)
             return False
 
     if boat_size == 1:
@@ -144,13 +172,17 @@ def validate_boat(board: List[List[bool]], boats, i: int, j: int):
         boats.remove(boat_size[0])  # O(k)
         return True
     
-    print('Barco de tamaño incorrecto')
+    
     return False
 
 
 
     
 def naval_battle_validator(board: List[List[int]], boats: List[int], res_rows: List[int], res_cols: List[int]):
+    """
+    Complejidad: O(m x n) + O(m x n + n/2 x (m + k)) = O(m x n)
+    """
+
     if len(board) == 0:
         return False
 
@@ -163,13 +195,13 @@ def naval_battle_validator(board: List[List[int]], boats: List[int], res_rows: L
     if sum(boats) > len(board) * len(board[0]): # Si la dimension del tablero es menor que la cantidad de posiciones a ocupar, no es valido.
         return False
 
-    if not validate_restrictions(board, boats, res_rows, res_cols):
+    if not validate_restrictions(board, boats, res_rows, res_cols): # O(m x n)
         return False
 
     for i in range(len(board)): # O(n)
         for j in range(len(board[i])):  # O(m)
             if board[i][j]:
-                if not validate_boat(board, boats, i, j):   # O(m + k) or O(n + k)
+                if not validate_boat(board, boats, i, j):   # O(max(m, n) + k)
                     return False
 
     if len(boats) > 0:  # Si no se colocaron todos los barcos
@@ -177,15 +209,52 @@ def naval_battle_validator(board: List[List[int]], boats: List[int], res_rows: L
 
     return True
 
+[1,0,1,0,1]
+[0,0,0,0,0]
+[1,0,1,0,1]
+[0,0,0,0,0]
+[1,0,1,0,1]
+
 '''
 Analisis de complejidad:
 n: número de filas
 m: número de columnas
 k: número de barcos
 - La función validate_restrictions tiene una complejidad de O(m x n) por la validación de las restricciones de filas y columnas.
-- La función validate_boat tiene una complejidad de O(m + k) ó de O(n + k), dependiendo de cual sea mayor.
-Por lo tanto, la complejidad total de la función naval_battle_validator es de O(m x n x (m + k)) ó de O(m x n x (n + k)), dependiendo de cual sea mayor (n ó m).
-Esto equivale a una complejidad de O(m^2 x n + m x n x k) ó de O(m x n^2 + m x n x k), por lo que la complejidad es polinomial.
+- La función validate_boat tiene una complejidad de O(max(m, n) + k). En el peor caso, se recorre toda la fila o columna, y se recorre la lista de barcos.
+Para analizar la complejidad total de la función naval_battle_validator, se deben tener en cuenta los siguientes aspectos:
+- La función validate_restrictions se ejecuta una sola vez, por lo que su complejidad no se multiplica por la cantidad de barcos.
+- En el bucle, se recorren todas las filas y columnas del tablero. Podríamos llegar a pensar que en el peor de los casos, se haría n x m veces la llamada a validate_boat, pero esto no es así.
+    Dadas las restricciones de adyacencias impuestas, en un tablero podría haber como máximo x cantidad de barcos de longitud 1, siendo x ~= n/2 * m/2 + n/2 (si n es impar) + m/2 (si m es impar). Esto significa que se podría
+    hacer como máximo x llamadas a validate_boat. 
+    Para ilustrar esto, supongamos un tablero de 5x5 con barcos de tamaño 1:
+    [1,0,1,0,1]
+    [0,0,0,0,0]
+    [1,0,1,0,1]
+    [0,0,0,0,0]
+    [1,0,1,0,1]
+    La cantidad de barcos es de 5/2 * 5/2 + 5/2 + 5/2 = 2*2 + 2 + 2 ~= 8, por lo que se harían 8 llamadas a validate_boat, con un error de 1 para cuando n y m son impares.
+    Como x depende de las dimensiones del tablero, al tender a infinito, podríamos decir que la complejidad de la función naval_battle_validator es de O(m x n x (max(m, n) + k)). Pero hay que tener en cuenta que para
+    que esto suceda, los barcos deben tener un tamaño de 1, y si lo tuvieran, las operaciones realizadas en validate_boat se harían en O(1) en lugar de O(max(m, n) + k).
+    Dicho esto, concluimos en que el peor escenario posible se da cuando los barcos tienen un tamaño igual a la cantidad de filas o columnas del tablero. En este caso, x = m/2 + 1(si m es impar) ó x = n/2 + 1(si n es impar).
+    Volvamos al ejemplo de la matriz de 5x5 con barcos de tamaño 5, pero teniendo en cuenta esto. Quedaría de esta forma:
+    [1,1,1,1,1]     
+    [0,0,0,0,0]
+    [1,1,1,1,1]               
+    [0,0,0,0,0]
+    [1,1,1,1,1]
+
+        ó 
+
+    [1,0,1,0,1]
+    [1,0,1,0,1]
+    [1,0,1,0,1]
+    [1,0,1,0,1]
+    [1,0,1,0,1]
+
+    Es decir, se ejecutaría n/2 veces la función validate_boat, que tendría una complejidad de O(m) ó m/2 veces la función validate_boat, que tendría una complejidad de O(n).
+    Por lo tanto, considerando por ejemplo que la cantidad de barcos es n/2, la complejidad total de la función naval_battle_validator es bastante menor que O(m x n x (max(m, n) + k)), siendo O((m x n) - n/2 + n/2 x (m + k)) = O((m x n) + (n x m)) = O(m x n).
+
 '''
 
 # Test cases

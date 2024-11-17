@@ -219,7 +219,8 @@ def batalla_naval_BT(
 
     remaining_ships = sum(ships[current_ship:])
     possible_demand = board.get_available_demand() - remaining_ships * 2
-    if possible_demand > best_solution.remaining_demand:
+    if len(best_solution.ocuppied_boxes) > 0 and\
+            possible_demand > best_solution.remaining_demand:
         return
 
     for i in range(n):

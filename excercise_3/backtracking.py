@@ -189,6 +189,7 @@ def parsear_archivo(archivo: str) -> Tuple[List[List[int]], List[int], List[int]
     tablero = np.zeros((len(demandas_filas), len(demandas_columnas)), dtype=int)
     return tablero, barcos, demandas_filas, demandas_columnas
 
+
 if __name__ == "__main__":
     tablero, barcos, demandas_filas, demandas_columnas = parsear_archivo("./archivos_pruebas/10_10_10.txt")
     barcos.sort(reverse=True)

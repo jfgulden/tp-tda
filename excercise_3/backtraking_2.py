@@ -36,11 +36,7 @@ class Ship:
 
 class Tablero:
     def __init__(
-        self,
-        n: int,
-        m: int,
-        demands_rows: List[int],
-        demands_columns: List[int]
+        self, n: int, m: int, demands_rows: List[int], demands_columns: List[int]
     ):
         self.n = n
         self.m = m
@@ -53,11 +49,9 @@ class Tablero:
         for box in boxes:
             if box in self.ocuppied_boxes:
                 return False
-            if (box[0] < 0) or (box[0] >= self.n) or\
-                    (box[1] < 0) or (box[1] >= self.m):
+            if (box[0] < 0) or (box[0] >= self.n) or (box[1] < 0) or (box[1] >= self.m):
                 return False
-            if self.is_prohibited_by_neighbours(
-                    ship.orientation, box[0], box[1]):
+            if self.is_prohibited_by_neighbours(ship.orientation, box[0], box[1]):
                 return False
             if not self.is_available_on_demand(box[0], box[1]):
                 return False
@@ -89,10 +83,7 @@ class Tablero:
     def is_available_on_demand(self, i: int, j: int):
         return self.demands_rows[i] > 0 and self.demands_columns[j] > 0
 
-    def is_prohibited_by_neighbours(self,
-                                    orientation: Orientation,
-                                    i: int,
-                                    j: int):
+    def is_prohibited_by_neighbours(self, orientation: Orientation, i: int, j: int):
         if orientation == Orientation.Horizontal:
             if ((i - 1, j) in self.ocuppied_boxes) or (
                 ((i + 1, j) in self.ocuppied_boxes)
@@ -104,10 +95,7 @@ class Tablero:
             ):
                 return True
 
-    def is_prohibited_by_neighbours_on_corners(self,
-                                               corner: Corner,
-                                               i: int,
-                                               j: int):
+    def is_prohibited_by_neighbours_on_corners(self, corner: Corner, i: int, j: int):
         if corner == Corner.Top:
             if (
                 (self.n and (i + 1, j - 1) in self.ocuppied_boxes)
@@ -166,7 +154,7 @@ class Tablero:
 class BestSolution:
     def __init__(self):
         self.ocuppied_boxes = set()
-        self.remaining_demand = float('inf')
+        self.remaining_demand = float("inf")
 
     def update_solution(self, board: Tablero):
         self.ocuppied_boxes = board.ocuppied_boxes.copy()
@@ -183,6 +171,20 @@ class BestSolution:
         ocuppied_boxes = f"Ocuppied boxes: {self.ocuppied_boxes}\n"
         remaining_demand = f"Remaining demand: {self.remaining_demand}\n"
         return ocuppied_boxes + remaining_demand
+
+
+# []
+
+
+def is_better_solution_possible(board, ships, current_ship, best_solution):
+    remaining_ships = sum(ships[current_ship:])
+    best_atteinable_solution = board.get_available_demand() - remaining_ships * 2
+    if (
+        len(best_solution.ocuppied_boxes) > 0
+        and best_atteinable_solution > best_solution.remaining_demand
+    ):
+        return False  # Ojo
+    return True
 
 
 def batalla_naval(
@@ -217,10 +219,7 @@ def batalla_naval_BT(
     if board.get_maximal_demand() < ship:
         return batalla_naval_BT(board, ships, current_ship + 1, best_solution)
 
-    remaining_ships = sum(ships[current_ship:])
-    possible_demand = board.get_available_demand() - remaining_ships * 2
-    if len(best_solution.ocuppied_boxes) > 0 and\
-            possible_demand > best_solution.remaining_demand:
+    if not is_better_solution_possible(board, ships, current_ship, best_solution):
         return
 
     for i in range(n):
@@ -231,11 +230,15 @@ def batalla_naval_BT(
                 if board.position_ship(ship_i_j, i, j):
                     batalla_naval_BT(board, ships, current_ship + 1, best_solution)
                     board.remove_ship(ship_i_j, i, j)
-    batalla_naval_BT(board, ships, current_ship + 1, best_solution)
+    # Si uno de longitud n no se puede poner en ninguna parte,
+    # no se puede poner en ninguna parte los demas de longitud n
+    while current_ship < len(ships) and ships[current_ship] == ship:
+        current_ship += 1
+    batalla_naval_BT(board, ships, current_ship, best_solution)
 
 
 if __name__ == "__main__":
-    # barcos = [1, 1, 1, 1, 2, 2, 2,3, 3, 4]
+    # barcos = [1, 1, 1, 1, 2, 2, 2, 3, 3, 4]
     # demands_rows = [0, 3, 2, 1, 1, 2, 4, 2, 2, 3]
     # demands_columns = [0, 5, 1, 3, 2, 2, 3, 1, 2, 1]
     # start_time = time.time()
@@ -247,24 +250,22 @@ if __name__ == "__main__":
     # for box in result:
     #     print(box)
 
-    # barcos = [1, 1, 1, 1]
-    # demands_rows = [2, 0, 2]
-    # demands_columns = [2, 0, 2]
-    # result = batalla_naval(barcos, demands_rows[::-1], demands_columns[::-1])
+    barcos = [1, 1, 1, 1]
+    demands_rows = [2, 0, 2]
+    demands_columns = [2, 0, 2]
+    result = batalla_naval(barcos, demands_rows[::-1], demands_columns[::-1])
     # # # for box in result:
     # #     print(box)
 
-    # barcos = [5, 5, 5]
-    # demands_rows = [5, 5, 5, 5, 5]
-    # demands_columns = [5, 5, 5, 5, 5]
-    # result = batalla_naval(barcos, demands_rows[::-1], demands_columns[::-1])
-    # for box in result:
-    #     print(box)
+    barcos = [5, 5, 5]
+    demands_rows = [5, 5, 5, 5, 5]
+    demands_columns = [5, 5, 5, 5, 5]
+    result = batalla_naval(barcos, demands_rows[::-1], demands_columns[::-1])
 
-    # barcos = [1, 2]
-    # demands_rows = [1, 1]
-    # demands_columns = [1, 1]
-    # result = batalla_naval(barcos, demands_rows[::-1], demands_columns[::-1])
+    barcos = [1, 2]
+    demands_rows = [1, 1]
+    demands_columns = [1, 1]
+    result = batalla_naval(barcos, demands_rows[::-1], demands_columns[::-1])
     # for box in result:
     #     print(box)
 

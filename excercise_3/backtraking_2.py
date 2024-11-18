@@ -46,6 +46,13 @@ class Tablero:
 
     def position_ship(self, ship: Ship, i: int, j: int):
         boxes = ship.get_boxes_to_occupy(i, j)
+        if ship.orientation == Orientation.Horizontal:
+            if len(boxes) > self.demands_rows[i]:
+                return False
+        else:
+            if len(boxes) > self.demands_columns[j]:
+                return False
+
         for box in boxes:
             if box in self.ocuppied_boxes:
                 return False
@@ -133,15 +140,31 @@ class Tablero:
             self.demands_rows[box[0]] += 1
             self.demands_columns[box[1]] += 1
 
+    # def __str__(self):
+    #     board_str = ""
+    #     for i in range(self.n):
+    #         for j in range(self.m):
+    #             if (i, j) in self.ocuppied_boxes:
+    #                 board_str += "X "
+    #             else:
+    #                 board_str += "O "
+    #         board_str += "\n"
+    #     return board_str
+
+    # A un costado pondre la demanda de las filas y arriba la demanda de las columnas
     def __str__(self):
         board_str = ""
         for i in range(self.n):
+            board_str += f"{self.demands_rows[i]}| "
             for j in range(self.m):
                 if (i, j) in self.ocuppied_boxes:
                     board_str += "X "
                 else:
                     board_str += "O "
             board_str += "\n"
+        board_str += "  "
+        for j in range(self.m):
+            board_str += f"{self.demands_columns[j]} "
         return board_str
 
     def get_maximal_demand(self):
@@ -169,7 +192,7 @@ class BestSolution:
 
     def __str__(self):
         ocuppied_boxes = f"Ocuppied boxes: {self.ocuppied_boxes}\n"
-        remaining_demand = f"Remaining demand: {self.remaining_demand}\n"
+        remaining_demand = f"Remaining demand: {self.remaining_demand}"
         return ocuppied_boxes + remaining_demand
 
 
@@ -181,7 +204,7 @@ def is_better_solution_possible(board, ships, current_ship, best_solution):
     best_atteinable_solution = board.get_available_demand() - remaining_ships * 2
     if (
         len(best_solution.ocuppied_boxes) > 0
-        and best_atteinable_solution > best_solution.remaining_demand
+        and best_atteinable_solution >= best_solution.remaining_demand
     ):
         return False  # Ojo
     return True
@@ -216,62 +239,46 @@ def batalla_naval_BT(
 
     ship = ships[current_ship]
 
-    if board.get_maximal_demand() < ship:
-        return batalla_naval_BT(board, ships, current_ship + 1, best_solution)
-
     if not is_better_solution_possible(board, ships, current_ship, best_solution):
         return
 
+    if board.get_maximal_demand() < ship:
+        return batalla_naval_BT(board, ships, current_ship + 1, best_solution)
+
     for i in range(n):
+        if board.demands_rows[i] == 0:
+            continue
         for j in range(m):
+            if board.demands_columns[j] == 0:
+                continue
             for orientation in [Orientation.Horizontal, Orientation.Vertical]:
-                # print(f"Ship: {ship}, i: {i}, j: {j}, orientation: {orientation}")
                 ship_i_j = Ship(ship, orientation)
                 if board.position_ship(ship_i_j, i, j):
                     batalla_naval_BT(board, ships, current_ship + 1, best_solution)
                     board.remove_ship(ship_i_j, i, j)
-    # Si uno de longitud n no se puede poner en ninguna parte,
-    # no se puede poner en ninguna parte los demas de longitud n
+
     while current_ship < len(ships) and ships[current_ship] == ship:
         current_ship += 1
-    batalla_naval_BT(board, ships, current_ship, best_solution)
+    batalla_naval_BT(board, ships, current_ship + 1, best_solution)
 
 
 if __name__ == "__main__":
-    # barcos = [1, 1, 1, 1, 2, 2, 2, 3, 3, 4]
-    # demands_rows = [0, 3, 2, 1, 1, 2, 4, 2, 2, 3]
-    # demands_columns = [0, 5, 1, 3, 2, 2, 3, 1, 2, 1]
-    # start_time = time.time()
-    # result = batalla_naval(barcos, demands_rows[::-1], demands_columns)
-    # end_time = time.time()
-    # print(f"Execution time: {end_time - start_time}")
-    # print(result)
-
-    # for box in result:
-    #     print(box)
-
-    barcos = [1, 1, 1, 1]
-    demands_rows = [2, 0, 2]
-    demands_columns = [2, 0, 2]
-    result = batalla_naval(barcos, demands_rows[::-1], demands_columns[::-1])
-    # # # for box in result:
-    # #     print(box)
-
-    barcos = [5, 5, 5]
-    demands_rows = [5, 5, 5, 5, 5]
-    demands_columns = [5, 5, 5, 5, 5]
-    result = batalla_naval(barcos, demands_rows[::-1], demands_columns[::-1])
-
-    barcos = [1, 2]
-    demands_rows = [1, 1]
-    demands_columns = [1, 1]
-    result = batalla_naval(barcos, demands_rows[::-1], demands_columns[::-1])
-    # for box in result:
-    #     print(box)
-
-    tablero, barcos, demands_rows, demands_columns = parsear_archivo("./30_25_25.txt")
+    tablero, barcos, demands_rows, demands_columns = parsear_archivo("./archivos_pruebas/TP3/30_25_25.txt")
+    print(barcos)
     start_time = time.time()
-    result = batalla_naval(barcos, demands_rows[::-1], demands_columns)
+    result = batalla_naval(barcos, demands_rows, demands_columns)
     end_time = time.time()
     print(f"Execution time: {end_time - start_time}")
-    print(result)
+    print(f"Demand fullfilled: {sum(demands_rows) + sum(demands_columns) - result.remaining_demand}")
+    print(f"Result: {result}")
+    print("\n\n")
+
+    tablero, barcos, demands_rows, demands_columns = parsear_archivo("./archivos_pruebas/TP3/20_20_20.txt")
+    print(barcos)
+    start_time = time.time()
+    result = batalla_naval(barcos, demands_rows, demands_columns)
+    end_time = time.time()
+    print(f"Execution time: {end_time - start_time}")
+    print(f"Demand fullfilled: {sum(demands_rows) + sum(demands_columns) - result.remaining_demand}")
+    print(f"Result: {result}")
+    print("\n\n")

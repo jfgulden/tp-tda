@@ -2,13 +2,15 @@ from typing import List
 from typing import Tuple
 import numpy as np
 from enum import Enum
+import time
+
 
 class Orientacion(Enum):
     Horizontal = 1
     Vertical = 2
 
 
-def validar_diagonal(tablero: List[List[int]], i: int, j: int) -> bool:
+def diagonales_estan_libres(tablero: List[List[int]], i: int, j: int) -> bool:
     if i+1 < len(tablero) and j+1 < len(tablero[0]) and tablero[i+1][j+1]:
         return False
 
@@ -39,7 +41,7 @@ def puede_colocar_horizontalmente(tablero: List[List[int]], len_barco: int, dema
         if demandas_columnas[k] < 1:
             return False
 
-        if not validar_diagonal(tablero, i, k):
+        if not diagonales_estan_libres(tablero, i, k):
             return False
 
         if (i+1 < n and tablero[i+1][k]) or (i-1 >= 0 and tablero[i-1][k]): # Chequeo arriba y abajo
@@ -62,7 +64,7 @@ def puede_colocar_verticalmente(tablero: List[List[int]], len_barco: int, demand
         if demandas_filas[k] < 1:
             return False
 
-        if not validar_diagonal(tablero, k, j):
+        if not diagonales_estan_libres(tablero, k, j):
             return False
 
         if (j+1 < m and tablero[k][j+1]) or (j-1 >= 0 and tablero[k][j-1]):
@@ -121,45 +123,63 @@ def actualizar_demandas(len_barco: int, i: int, j: int, orientacion: Orientacion
     
     return demandas_filas_cp, demandas_columnas_cp
 
-    
-def batalla_naval_BT(tablero: List[List[int]], barcos: List[int], demandas_filas: List[int], demandas_columnas: List[int], mejor_solucion: List[Tuple[List[List[int]], int]], barco_actual: int = 0, not_repeat: bool = False):
+def buscar_posiciones_posibles(tablero: List[List[int]], demandas_filas: List[int], demandas_columnas: List[int], len_barco: int, barcos: List[int], barco_actual: int) -> List[Tuple[int, int]]:
+    n = len(tablero)
+    m = len(tablero[0])
+    posiciones = []
+    for i in range(n):
+        for j in range(m):
+            for orientacion in Orientacion:
+                if puede_colocar_barco(tablero, len_barco, demandas_filas, demandas_columnas, i, j, orientacion):
+                    posiciones.append(((i, j), orientacion))
+                    if barco_actual == len(barcos)-1: # Si es el ultimo barco y lo puedo poner, lo pongo en la primera posicion disponible, no me importa la orientacion.
+                        return posiciones
+
+    return posiciones
+
+def batalla_naval_BT(tablero: List[List[int]], barcos: List[int], demandas_filas: List[int], demandas_columnas: List[int], mejor_solucion: List[Tuple[List[List[int]], int]], barco_actual: int = 0, saltea_barco: bool = False, memo = None) -> None:
     n = len(demandas_filas)
     m = len(demandas_columnas)
+
+    demanda_incumplida = sum(demandas_filas) + sum(demandas_columnas)
+
+    if (barco_actual >= len(barcos) and demanda_incumplida < mejor_solucion[0][1]):
+        mejor_solucion[0] = (np.copy(tablero), demanda_incumplida)
+
 
     if barco_actual >= len(barcos):
         return
 
     barco = barcos[barco_actual]
 
-    if not_repeat and barco_actual >= 1 and barco == barcos[barco_actual-1]:
+    if saltea_barco and barco_actual >= 1 and barco == barcos[barco_actual-1] or barco <= 0:
         batalla_naval_BT(tablero, barcos, demandas_filas, demandas_columnas, mejor_solucion, barco_actual+1, True)
         return
-    
-
-    demanda_incumplida = sum(demandas_filas) + sum(demandas_columnas)
-
-    if mejor_solucion[0] is None or demanda_incumplida < mejor_solucion[0][1]:
-        mejor_solucion[0] = (np.copy(tablero), demanda_incumplida)
         
+
+    barcos_restantes = sum(barcos[barco_actual:])
+    if demanda_incumplida - barcos_restantes * 2 >= mejor_solucion[0][1]:
+        return 
+
+    posiciones = buscar_posiciones_posibles(tablero, demandas_filas, demandas_columnas, barco, barcos, barco_actual)
+
+    print(tablero)
+
+    for posicion in posiciones:
+        i, j = posicion[0]
+        orientacion = posicion[1]
+        colocar_barco(tablero, barco, i, j, orientacion)
+        nueva_demanda_filas, nueva_demanda_columnas = actualizar_demandas(barco, i, j, orientacion, demandas_filas, demandas_columnas)
+        batalla_naval_BT(tablero, barcos, nueva_demanda_filas, nueva_demanda_columnas, mejor_solucion, barco_actual+1)
+        remover_barco(tablero, barco, i, j, orientacion)
+
+    #TODO: Agregar poda de que si se llegó al último barco, y se puso, no hace falta seguir probando con otras posiciones.
     
-    for i in range(n):
-        if demandas_filas[i] == 0:
-            continue
-        for j in range(m):
-            if demandas_filas[j] == 0:
-                continue
-            for orientacion in Orientacion:
-                if puede_colocar_barco(tablero, barco, demandas_filas, demandas_columnas, i, j, orientacion):
-                    colocar_barco(tablero, barco, i, j, orientacion)
-                    nueva_demanda_filas, nueva_demanda_columnas = actualizar_demandas(barco, i, j, orientacion, demandas_filas, demandas_columnas)
-                    batalla_naval_BT(tablero, barcos, nueva_demanda_filas, nueva_demanda_columnas, mejor_solucion, barco_actual+1)
-                    remover_barco(tablero, barco, i, j, orientacion)
-        
-    # Intentar omitir el barco actual
     batalla_naval_BT(tablero, barcos, demandas_filas, demandas_columnas, mejor_solucion, barco_actual+1, True)
 
 def batalla_naval(tablero: List[List[int]], barcos: List[int], demandas_filas: List[int], demandas_columnas: List[int]) -> Tuple[List[List[int]], int]:
-    mejor_solucion = [None]
+    barcos = sorted(barcos, reverse=True)
+    mejor_solucion = [(tablero, sum(demandas_filas) + sum(demandas_columnas))]
     batalla_naval_BT(tablero, barcos, demandas_filas, demandas_columnas, mejor_solucion)
     return mejor_solucion[0]
 
@@ -191,45 +211,11 @@ def parsear_archivo(archivo: str) -> Tuple[List[List[int]], List[int], List[int]
 
 
 if __name__ == "__main__":
-    tablero, barcos, demandas_filas, demandas_columnas = parsear_archivo("./archivos_pruebas/10_10_10.txt")
-    barcos.sort(reverse=True)
-    mejor_tablero, demanda_incumplida = batalla_naval(tablero, barcos, demandas_filas, demandas_columnas)
-    print(mejor_tablero, demanda_incumplida)
 
-""" 
-    tablero, barcos, demandas_filas, demandas_columnas = parsear_archivo("./archivos_pruebas/3_3_2.txt")
-    mejor_tablero, demanda_incumplida = batalla_naval(tablero, barcos, demandas_filas, demandas_columnas)
-    print(mejor_tablero, demanda_incumplida)
-
-    tablero, barcos, demandas_filas, demandas_columnas = parsear_archivo("./archivos_pruebas/5_5_6.txt")
-    mejor_tablero, demanda_incumplida = batalla_naval(tablero, barcos, demandas_filas, demandas_columnas)
-    print(mejor_tablero, demanda_incumplida)
-
-    tablero, barcos, demandas_filas, demandas_columnas = parsear_archivo("./archivos_pruebas/8_7_10.txt")
-    mejor_tablero, demanda_incumplida = batalla_naval(tablero, barcos, demandas_filas, demandas_columnas)
-    print(mejor_tablero, demanda_incumplida)
-
-
-    tablero, barcos, demandas_filas, demandas_columnas = parsear_archivo("./archivos_pruebas/10_10_10.txt")
-    mejor_tablero, demanda_incumplida = batalla_naval(tablero, barcos, demandas_filas, demandas_columnas)
-    print(mejor_tablero, demanda_incumplida)
-
-    tablero, barcos, demandas_filas, demandas_columnas = parsear_archivo("./archivos_pruebas/12_12_21.txt")
-    mejor_tablero, demanda_incumplida = batalla_naval(tablero, barcos, demandas_filas, demandas_columnas)
-    print(mejor_tablero, demanda_incumplida)
-
-    tablero, barcos, demandas_filas, demandas_columnas = parsear_archivo("./archivos_pruebas/15_10_15.txt")
-    mejor_tablero, demanda_incumplida = batalla_naval(tablero, barcos, demandas_filas, demandas_columnas)
-    print(mejor_tablero, demanda_incumplida)
-
-    tablero, barcos, demandas_filas, demandas_columnas = parsear_archivo("./archivos_pruebas/20_20_20.txt")
-    mejor_tablero, demanda_incumplida = batalla_naval(tablero, barcos, demandas_filas, demandas_columnas)
-    print(mejor_tablero, demanda_incumplida)
-
-    tablero, barcos, demandas_filas, demandas_columnas = parsear_archivo("./archivos_pruebas/20_25_30.txt")
-    mejor_tablero, demanda_incumplida = batalla_naval(tablero, barcos, demandas_filas, demandas_columnas)
-    print(mejor_tablero, demanda_incumplida)
-
-    tablero, barcos, demandas_filas, demandas_columnas = parsear_archivo("./archivos_pruebas/30_25_25.txt")
-    mejor_tablero, demanda_incumplida = batalla_naval(tablero, barcos, demandas_filas, demandas_columnas)
-    print(mejor_tablero, demanda_incumplida) """
+    for file in ["30_25_25"]:
+        start_time = time.time()
+        tablero, barcos, demandas_filas, demandas_columnas = parsear_archivo(f"excercise_3/archivos_pruebas/{file}.txt")
+        mejor_tablero, demanda_incumplida = batalla_naval(tablero, barcos, demandas_filas, demandas_columnas)
+        end_time = time.time()
+        print(mejor_tablero, demanda_incumplida)
+        print(f"Execution time: {end_time - start_time} seconds")

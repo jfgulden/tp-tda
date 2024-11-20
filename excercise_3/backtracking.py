@@ -204,8 +204,8 @@ def parsear_archivo(archivo: str) -> Tuple[List[List[int]], List[int], List[int]
             elif i == 2:
                 barcos.append(int(line.strip()))
         
-    print(f"demandas_filas: {demandas_filas}")
-    print(f"demandas_columnas: {demandas_columnas}")
+    # print(f"demandas_filas: {demandas_filas}")
+    # print(f"demandas_columnas: {demandas_columnas}")
     tablero = np.zeros((len(demandas_filas), len(demandas_columnas)), dtype=int)
     return tablero, barcos, demandas_filas, demandas_columnas
 

@@ -4,6 +4,6 @@
 
 - Theo Miguel
 - Brayan Ricaldi
-- Franco Altiera
+- Franco Altieri
 - Daniela Gómez
 - Juan Francisco Gulden

@@ -84,6 +84,7 @@ class TestCatedra(unittest.TestCase):
 
     def test_10000_monedas(self):
         print("--------SE PRUEBA UN ARREGLO DE 10000 MONEDAS--------")
+        print("Esto puede tardar unos segundos,espere por favor.\n")
         monedas = obtener_monedas_de_archivo("excercise_2/archivos_pruebas/10000.txt")
         resultado = maxima_ganancia_sofia(monedas)
         suma_total = sum(resultado)

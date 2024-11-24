@@ -1,0 +1,10 @@
+- - - X X 
+X X - - - 
+- - - - - 
+X - - - - 
+- - - - X 
+
+Demanda satisfecha: 12.0
+Demanda total: 18
+Demanda insatisfecha: 6.0
+Execution time: 0.5360076427459717 seconds

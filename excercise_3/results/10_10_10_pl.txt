@@ -1,0 +1,15 @@
+- - - - X X - - X - 
+- - X - - - - - X - 
+- - - - - - X - X - 
+- X - X - - X - X - 
+- - - X - - X - - - 
+- - - X - - - - - - 
+X - - - - - - - - - 
+- - - - - - - X X - 
+- X - - X X - - - - 
+- - - - - - - - - - 
+
+Demanda satisfecha: 40.0
+Demanda total: 40
+Demanda insatisfecha: 0.0
+Execution time: 48.27909255027771 seconds

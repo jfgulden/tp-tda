@@ -1,7 +1,12 @@
 import sys
-sys.setrecursionlimit(5000)
+sys.setrecursionlimit(6000)
+
 
 def obtener_monedas_de_archivo(file: str):
+    """
+    Lee el archivo de texto con las monedas y las almacena en una lista.
+    Complejidad: O(n), siendo n la cantidad de monedas.
+    """
     file = open(file, "r")
     file.readline()
     monedas = list(map(int, file.readline().strip().split(';')))
@@ -9,6 +14,10 @@ def obtener_monedas_de_archivo(file: str):
 
 
 def reconstruir_solucion(monedas, matriz, inicio, fin, solucion):
+    """
+    Reconstruye la solución óptima a partir de la matriz de soluciones.
+    Complejidad: 
+    """
     if fin == inicio:
         solucion.append(monedas[inicio])
         return solucion
@@ -37,10 +46,14 @@ def reconstruir_solucion(monedas, matriz, inicio, fin, solucion):
 
 
 def maxima_ganancia_sofia(monedas):
+    """
+    Calcula la máxima ganancia que Sofia puede obtener.
+    Complejidad: O(n^2), siendo n la cantidad total de monedas.
+    """
     n = len(monedas)
     
     #matriz_solucion: matriz_solucion[i][j] almacena la ganancia máxima que Sofia puede obtener en el rango [i, j]
-    matriz_solucion = [[None] * n for _ in range(n)] #INICIALIZO EN 0 LA MATRIZ
+    matriz_solucion = [[None] * n for _ in range(n)] 
 
     # Caso base: cuando solo hay una moneda disponible
     #inicializa la diagonal principal de la matriz_solucion
@@ -65,73 +78,15 @@ def maxima_ganancia_sofia(monedas):
     return solucion
 
 
-'''
-Complejidad: O(n^2), siendo n la cantidad total de monedas. 
-TODO: Desarrollar análisis de complejidad.
-'''
-
 if __name__ == "__main__":
-    # Los prints para mostrar las monedas sacadas por Sofia están comentados para mantener la legibilidad de los outputs. 
-    # Descomentarlos de ser necesario.
 
-    monedas_5 = obtener_monedas_de_archivo("excercise_2/archivos_pruebas/5.txt")
-    solucion_5 = maxima_ganancia_sofia(monedas_5)
-    print("Prueba con 5 monedas:")
-    # print(f"\tmonedas sacadas por Sofia: {solucion_5}")
-    print(f"\tmonto obtenido por Sofia: {sum(solucion_5)}")
-
-    monedas_10 = obtener_monedas_de_archivo("excercise_2/archivos_pruebas/10.txt")
-    solucion_10 = maxima_ganancia_sofia(monedas_10)
-    print("Prueba con 10 monedas:")
-    # print(f"\tmonedas sacadas por Sofia: {solucion_10}")
-    print(f"\tmonto obtenido por Sofia: {sum(solucion_10)}")
-
-    monedas_20 = obtener_monedas_de_archivo("excercise_2/archivos_pruebas/20.txt")
-    solucion_20 = maxima_ganancia_sofia(monedas_20)
-    print("Prueba con 20 monedas:")
-    # print(f"\tmonedas sacadas por Sofia: {solucion_20}")
-    print(f"\tmonto obtenido por Sofia: {sum(solucion_20)}")
-
-    monedas_25 = obtener_monedas_de_archivo("excercise_2/archivos_pruebas/25.txt")
-    solucion_25 = maxima_ganancia_sofia(monedas_25)
-    print("Prueba con 25 monedas:")
-    # print(f"\tmonedas sacadas por Sofia: {solucion_25}")
-    print(f"\tmonto obtenido por Sofia: {sum(solucion_25)}")
-
-    monedas_50 = obtener_monedas_de_archivo("excercise_2/archivos_pruebas/50.txt")
-    solucion_50 = maxima_ganancia_sofia(monedas_50)
-    print("Prueba con 50 monedas:")
-    # print(f"\tmonedas sacadas por Sofia: {solucion_50}")
-    print(f"\tmonto obtenido por Sofia: {sum(solucion_50)}")
-
-    monedas_100 = obtener_monedas_de_archivo("excercise_2/archivos_pruebas/100.txt")
-    solucion_100 = maxima_ganancia_sofia(monedas_100)
-    print("Prueba con 100 monedas:")
-    # print(f"\tmonedas sacadas por Sofia: {solucion_100}")
-    print(f"\tmonto obtenido por Sofia: {sum(solucion_100)}")
-
-    monedas_1000 = obtener_monedas_de_archivo("excercise_2/archivos_pruebas/1000.txt")
-    solucion_1000 = maxima_ganancia_sofia(monedas_1000)
-    print("Prueba con 1000 monedas:")
-    # print(f"\tmonedas sacadas por Sofia: {solucion_1000}")
-    print(f"\tmonto obtenido por Sofia: {sum(solucion_1000)}")
-
-    monedas_2000 = obtener_monedas_de_archivo("excercise_2/archivos_pruebas/2000.txt")
-    solucion_2000 = maxima_ganancia_sofia(monedas_2000)
-    print("Prueba con 2000 monedas:")
-    #print(f"\tmonedas sacadas por Sofia: {solucion_2000}")
-    print(f"\tmonto obtenido por Sofia: {sum(solucion_2000)}")
-
-    monedas_5000 = obtener_monedas_de_archivo("excercise_2/archivos_pruebas/5000.txt")
-    solucion_5000 = maxima_ganancia_sofia(monedas_5000)
-    print("Prueba con 5000 monedas:")
-    # print(f"\tmonedas sacadas por Sofia: {solucion_5000}")
-    print(f"\tmonto obtenido por Sofia: {sum(solucion_5000)}")
-
-    monedas_10000 = obtener_monedas_de_archivo("excercise_2/archivos_pruebas/10000.txt")
-    solucion_10000 = maxima_ganancia_sofia(monedas_10000)
-    print("Prueba con 10000 monedas:")
-    # print(f"\tmonedas sacadas por Sofia: {solucion_10000}")
-    print(f"\tmonto obtenido por Sofia: {sum(solucion_10000)}")
-
+    if len(sys.argv) != 2:
+        print("Uso: python3 pd.py <archivo_prueba>")
+        sys.exit()
+        
+    monedas = obtener_monedas_de_archivo(sys.argv[1])
+    solucion = maxima_ganancia_sofia(monedas)
+    print(f"Archivo de prueba: {sys.argv[1]}")
+    print(f"Monedas sacadas por Sofia: {solucion}")
+    print(f"Monto obtenido por Sofia: {sum(solucion)}")
 

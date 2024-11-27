@@ -1,5 +1,5 @@
 import unittest
-from backtraking import naval_battle
+from backtracking import naval_battle
 
 
 class GameTest:

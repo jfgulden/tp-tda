@@ -1,234 +1,281 @@
-from typing import List
-from typing import Tuple
-import numpy as np
 from enum import Enum
+from typing import List
 
-class Orientacion(Enum):
+
+class Orientation(Enum):
     Horizontal = 1
     Vertical = 2
 
 
-def validar_diagonal(tablero: List[List[int]], i: int, j: int) -> bool:
-    if i+1 < len(tablero) and j+1 < len(tablero[0]) and tablero[i+1][j+1]:
+class Corner(Enum):
+    Top = 1
+    Botton = 2
+    Left = 3
+    Right = 4
+
+
+class Ship:
+    def __init__(self, tamano: int, orientation: Orientation):
+        self.tamano = tamano
+        self.orientation = orientation
+
+    def change_orientation(self):
+        if self.orientation == Orientation.Horizontal:
+            self.orientation = Orientation.Vertical
+        else:
+            self.orientation = Orientation.Horizontal
+
+    def get_boxes_to_occupy(self, i: int, j: int):
+        if self.orientation == Orientation.Horizontal:
+            return [(i, j + k) for k in range(self.tamano)]
+        else:
+            return [(i + k, j) for k in range(self.tamano)]
+
+
+class Tablero:
+    def __init__(
+        self,
+        n: int,
+        m: int,
+        demands_rows: List[int],
+        demands_columns: List[int]
+    ):
+        self.n = n
+        self.m = m
+        self.demands_rows = demands_rows
+        self.demands_columns = demands_columns
+        self.ocuppied_boxes: set = set()
+
+    def position_ship(self, ship: Ship, i: int, j: int):
+        boxes = ship.get_boxes_to_occupy(i, j)
+        if ship.orientation == Orientation.Horizontal:
+            if len(boxes) > self.demands_rows[i]:
+                return False
+        else:
+            if len(boxes) > self.demands_columns[j]:
+                return False
+
+        for box in boxes:
+            if box in self.ocuppied_boxes:
+                return False
+            x = box[0]
+            y = box[1]
+            if (x < 0) or (x >= self.n) or (y < 0) or (y >= self.m):
+                return False
+            if self.is_prohibited_by_neighbours(ship.orientation, x, y):
+                return False
+            if not self.is_available_on_demand(x, y):
+                return False
+        orientation = ship.orientation
+        if orientation == Orientation.Horizontal:
+            if self.is_prohibited_by_neighbours_on_corners(
+                Corner.Left, boxes[0][0], boxes[0][1]
+            ):
+                return False
+            if self.is_prohibited_by_neighbours_on_corners(
+                Corner.Right, boxes[-1][0], boxes[-1][1]
+            ):
+                return False
+        else:
+            if self.is_prohibited_by_neighbours_on_corners(
+                Corner.Botton, boxes[0][0], boxes[0][1]
+            ):
+                return False
+            if self.is_prohibited_by_neighbours_on_corners(
+                Corner.Top, boxes[-1][0], boxes[-1][1]
+            ):
+                return False
+        for box in boxes:
+            self.ocuppied_boxes.add(box)
+            self.demands_rows[box[0]] -= 1
+            self.demands_columns[box[1]] -= 1
+        return True
+
+    def is_available_on_demand(self, i: int, j: int):
+        return self.demands_rows[i] > 0 and self.demands_columns[j] > 0
+
+    def is_prohibited_by_neighbours(self,
+                                    orientation: Orientation,
+                                    i: int,
+                                    j: int):
+        if orientation == Orientation.Horizontal:
+            if ((i - 1, j) in self.ocuppied_boxes) or (
+                ((i + 1, j) in self.ocuppied_boxes)
+            ):
+                return True
+        else:
+            if ((i, j - 1) in self.ocuppied_boxes) or (
+                ((i, j + 1) in self.ocuppied_boxes)
+            ):
+                return True
+
+    def is_prohibited_by_neighbours_on_corners(self,
+                                               corner: Corner,
+                                               i: int,
+                                               j: int):
+        if corner == Corner.Top:
+            if (
+                (self.n and (i + 1, j - 1) in self.ocuppied_boxes)
+                or (self.m and (i + 1, j + 1) in self.ocuppied_boxes)
+                or (self.n and (i + 1, j) in self.ocuppied_boxes)
+            ):
+                return True
+        elif corner == Corner.Botton:
+            if (
+                (self.n and (i - 1, j - 1) in self.ocuppied_boxes)
+                or (self.m and (i - 1, j + 1) in self.ocuppied_boxes)
+                or (self.n and (i - 1, j) in self.ocuppied_boxes)
+            ):
+                return True
+        elif corner == Corner.Left:
+            if (
+                (self.n and (i - 1, j - 1) in self.ocuppied_boxes)
+                or (self.m and (i + 1, j - 1) in self.ocuppied_boxes)
+                or (self.m and (i, j - 1) in self.ocuppied_boxes)
+            ):
+                return True
+        elif corner == Corner.Right:
+            if (
+                (self.n and (i - 1, j + 1) in self.ocuppied_boxes)
+                or (self.m and (i + 1, j + 1) in self.ocuppied_boxes)
+                or (self.m and (i, j + 1) in self.ocuppied_boxes)
+            ):
+                return True
         return False
 
-    if i-1 >= 0 and j+1 < len(tablero[0]) and tablero[i-1][j+1]:
+    def remove_ship(self, ship: Ship, i: int, j: int):
+        boxes = ship.get_boxes_to_occupy(i, j)
+        for box in boxes:
+            self.ocuppied_boxes.remove(box)
+            self.demands_rows[box[0]] += 1
+            self.demands_columns[box[1]] += 1
+
+    def __str__(self):
+        board_str = ""
+        for i in range(self.n):
+            board_str += f"{self.demands_rows[i]}| "
+            for j in range(self.m):
+                if (i, j) in self.ocuppied_boxes:
+                    board_str += "X "
+                else:
+                    board_str += "O "
+            board_str += "\n"
+        board_str += "  "
+        for j in range(self.m):
+            board_str += f"{self.demands_columns[j]} "
+        return board_str
+
+    def get_maximal_demand(self):
+        return max(max(self.demands_rows), max(self.demands_columns))
+
+    def get_available_demand(self):
+        return sum(self.demands_rows) + sum(self.demands_columns)
+
+
+class BestSolution:
+    def __init__(self):
+        self.ocuppied_boxes = set()
+        self.remaining_demand = float("inf")
+
+    def update_solution(self, board: Tablero):
+        self.ocuppied_boxes = board.ocuppied_boxes.copy()
+        self.remaining_demand = board.get_available_demand()
+
+    def compare_solution(self, board: Tablero):
+        if board.get_available_demand() < self.remaining_demand:
+            self.ocuppied_boxes = board.ocuppied_boxes.copy()
+            self.remaining_demand = board.get_available_demand()
+            return True
         return False
 
-    if i-1 >= 0 and j-1 >= 0 and tablero[i-1][j-1]:
+    def __str__(self):
+        ocuppied_boxes = f"Ocuppied boxes: {self.ocuppied_boxes}\n"
+        remaining_demand = f"Remaining demand: {self.remaining_demand}"
+        return ocuppied_boxes + remaining_demand
+
+
+def is_better_solution_possible(board, ships, current_ship, best_solution):
+    remaining_ships = sum(ships[current_ship:])
+    best_atteinable_solution = board.get_available_demand() - remaining_ships * 2
+    if (
+        len(best_solution.ocuppied_boxes) > 0
+        and best_atteinable_solution >= best_solution.remaining_demand
+    ):
         return False
-
-    if i+1 < len(tablero) and j-1 >= 0 and tablero[i+1][j-1]:
+    max_demand = board.get_maximal_demand()
+    valid_ships = [value for value in ships[current_ship:] if value <= max_demand]
+    best_atteinable_solution = (
+            board.get_available_demand() - sum(valid_ships) * 2
+        )
+    if (
+        len(best_solution.ocuppied_boxes) > 0
+        and best_atteinable_solution >= best_solution.remaining_demand
+    ):
         return False
-
-
     return True
 
 
-def puede_colocar_horizontalmente(tablero: List[List[int]], len_barco: int, demandas_filas: List[int], demandas_columnas: List[int], i: int, j: int) -> bool:
-    n = len(tablero)
-    m = len(tablero[0])
-   
-    if j + len_barco - 1 >= m or demandas_filas[i] < len_barco:  #Chequeo que entre el barco
-        return False
+def naval_battle(
+    barcos: List[int], demands_rows: List[int], demands_columns: List[int]
+):
 
-    if (j - 1 >= 0 and tablero[i][j-1]) or (j + len_barco < m and tablero[i][j + len_barco]):   #Chequeo de los extremos
-        return False
-
-    for k in range(j, j + len_barco):
-        if demandas_columnas[k] < 1:
-            return False
-
-        if not validar_diagonal(tablero, i, k):
-            return False
-
-        if (i+1 < n and tablero[i+1][k]) or (i-1 >= 0 and tablero[i-1][k]): # Chequeo arriba y abajo
-            return False
-
-    return True
+    barcos = sorted(barcos, reverse=True)
+    n = len(demands_rows)
+    m = len(demands_columns)
+    board = Tablero(n, m, demands_rows, demands_columns)
+    best_solution = BestSolution()
+    naval_battle_BT(board, barcos, 0, best_solution)
+    return best_solution
 
 
-def puede_colocar_verticalmente(tablero: List[List[int]], len_barco: int, demandas_filas: List[int], demandas_columnas: List[int], i: int, j: int) -> bool:
-    n = len(tablero)
-    m = len(tablero[0])
+def naval_battle_BT(
+    board: Tablero,
+    ships: List[int],
+    current_ship: int,
+    best_solution: BestSolution,
+    i_start: int = 0,
+    j_start: int = 0,
+):
 
-    if i + len_barco - 1 >= n or demandas_columnas[j] < len_barco:
-        return False
+    n = board.n
+    m = board.m
 
-    if (i - 1 >= 0 and tablero[i-1][j]) or (i + len_barco < n and tablero[i+len_barco][j]):
-        return False
-
-    for k in range(i, i + len_barco):
-        if demandas_filas[k] < 1:
-            return False
-
-        if not validar_diagonal(tablero, k, j):
-            return False
-
-        if (j+1 < m and tablero[k][j+1]) or (j-1 >= 0 and tablero[k][j-1]):
-            return False
-        
-    return True
-
-def puede_colocar_barco(tablero: List[List[int]], len_barco: int, demandas_filas: List[int], demandas_columnas: List[int], i: int, j: int, orientacion: Orientacion) -> bool:
-    if tablero[i][j]:
-        return False
-
-    if orientacion == Orientacion.Horizontal:
-        return puede_colocar_horizontalmente(tablero, len_barco, demandas_filas, demandas_columnas, i, j)
-        
-    if orientacion == Orientacion.Vertical:
-        return puede_colocar_verticalmente(tablero, len_barco, demandas_filas, demandas_columnas, i, j)
-    
-    return False
-            
-
-def colocar_barco(tablero: List[List[int]], len_barco: int, i: int, j: int, orientacion: Orientacion):
-
-    if orientacion == Orientacion.Horizontal:
-        for k in range(j, j + len_barco):
-            tablero[i][k] = 1
-
-    if orientacion == Orientacion.Vertical:
-        for k in range(i, i + len_barco):
-            tablero[k][j] = 1
-            
-def remover_barco(tablero: List[List[int]], len_barco: int, i: int, j: int, orientacion: Orientacion):
-
-    if orientacion == Orientacion.Horizontal:
-        for k in range(j, j + len_barco):
-            tablero[i][k] = 0
-
-    if orientacion == Orientacion.Vertical:
-        for k in range(i, i + len_barco):
-            tablero[k][j] = 0
-            
-def actualizar_demandas(len_barco: int, i: int, j: int, orientacion: Orientacion, demandas_filas: List[int], demandas_columnas: List[int]) -> Tuple[List[int], List[int]]:
-    
-    demandas_filas_cp = demandas_filas.copy()
-    demandas_columnas_cp = demandas_columnas.copy()
-    
-    
-    if orientacion == Orientacion.Horizontal:
-        demandas_filas_cp[i] -= len_barco
-        for k in range(j, j + len_barco):
-            demandas_columnas_cp[k] -= 1
-
-    if orientacion == Orientacion.Vertical:
-        demandas_columnas_cp[j] -= len_barco
-        for k in range(i, i + len_barco):
-            demandas_filas_cp[k] -= 1
-    
-    return demandas_filas_cp, demandas_columnas_cp
-
-    
-def batalla_naval_BT(tablero: List[List[int]], barcos: List[int], demandas_filas: List[int], demandas_columnas: List[int], mejor_solucion: List[Tuple[List[List[int]], int]], barco_actual: int = 0, not_repeat: bool = False):
-    n = len(demandas_filas)
-    m = len(demandas_columnas)
-
-    if barco_actual >= len(barcos):
+    if current_ship >= len(ships):
+        best_solution.compare_solution(board)
         return
 
-    barco = barcos[barco_actual]
+    ship = ships[current_ship]
 
-    if not_repeat and barco_actual >= 1 and barco == barcos[barco_actual-1]:
-        batalla_naval_BT(tablero, barcos, demandas_filas, demandas_columnas, mejor_solucion, barco_actual+1, True)
+    if not is_better_solution_possible(
+        board, ships, current_ship, best_solution
+    ):
         return
-    
 
-    demanda_incumplida = sum(demandas_filas) + sum(demandas_columnas)
+    if board.get_maximal_demand() < ship:
+        return naval_battle_BT(board, ships, current_ship + 1, best_solution)
 
-    if mejor_solucion[0] is None or demanda_incumplida < mejor_solucion[0][1]:
-        mejor_solucion[0] = (np.copy(tablero), demanda_incumplida)
-        
-    
-    for i in range(n):
-        if demandas_filas[i] == 0:
+    for i in range(i_start, n):
+        if board.demands_rows[i] == 0:
             continue
-        for j in range(m):
-            if demandas_filas[j] == 0:
+        for j in range(j_start, m):
+            if board.demands_columns[j] == 0:
                 continue
-            for orientacion in Orientacion:
-                if puede_colocar_barco(tablero, barco, demandas_filas, demandas_columnas, i, j, orientacion):
-                    colocar_barco(tablero, barco, i, j, orientacion)
-                    nueva_demanda_filas, nueva_demanda_columnas = actualizar_demandas(barco, i, j, orientacion, demandas_filas, demandas_columnas)
-                    batalla_naval_BT(tablero, barcos, nueva_demanda_filas, nueva_demanda_columnas, mejor_solucion, barco_actual+1)
-                    remover_barco(tablero, barco, i, j, orientacion)
-        
-    # Intentar omitir el barco actual
-    batalla_naval_BT(tablero, barcos, demandas_filas, demandas_columnas, mejor_solucion, barco_actual+1, True)
+            for orientation in [Orientation.Horizontal, Orientation.Vertical]:
+                ship_i_j = Ship(ship, orientation)
+                if board.position_ship(ship_i_j, i, j):
+                    if (
+                        len(ships) > current_ship + 1
+                        and ships[current_ship + 1] == ship
+                    ):
+                        naval_battle_BT(
+                            board, ships, current_ship + 1, best_solution, i, j
+                        )
+                    else:
+                        naval_battle_BT(
+                            board, ships, current_ship + 1, best_solution
+                        )
+                    board.remove_ship(ship_i_j, i, j)
 
-def batalla_naval(tablero: List[List[int]], barcos: List[int], demandas_filas: List[int], demandas_columnas: List[int]) -> Tuple[List[List[int]], int]:
-    mejor_solucion = [None]
-    batalla_naval_BT(tablero, barcos, demandas_filas, demandas_columnas, mejor_solucion)
-    return mejor_solucion[0]
-
-
-def parsear_archivo(archivo: str) -> Tuple[List[List[int]], List[int], List[int], List[int]]:
-    with open(archivo, "r") as file:
-        i = 0
-        demandas_filas = []
-        demandas_columnas = []
-        barcos = []
-        
-        for index, line in enumerate(file):
-            if index < 2:
-                continue
-            if line.strip() == "":
-                i += 1
-                continue
-            if i == 0:
-                demandas_filas.append(int(line.strip()))
-            elif i == 1:
-                demandas_columnas.append(int(line.strip()))
-            elif i == 2:
-                barcos.append(int(line.strip()))
-        
-    print(f"demandas_filas: {demandas_filas}")
-    print(f"demandas_columnas: {demandas_columnas}")
-    tablero = np.zeros((len(demandas_filas), len(demandas_columnas)), dtype=int)
-    return tablero, barcos, demandas_filas, demandas_columnas
-
-if __name__ == "__main__":
-    tablero, barcos, demandas_filas, demandas_columnas = parsear_archivo("./archivos_pruebas/10_10_10.txt")
-    barcos.sort(reverse=True)
-    mejor_tablero, demanda_incumplida = batalla_naval(tablero, barcos, demandas_filas, demandas_columnas)
-    print(mejor_tablero, demanda_incumplida)
-
-""" 
-    tablero, barcos, demandas_filas, demandas_columnas = parsear_archivo("./archivos_pruebas/3_3_2.txt")
-    mejor_tablero, demanda_incumplida = batalla_naval(tablero, barcos, demandas_filas, demandas_columnas)
-    print(mejor_tablero, demanda_incumplida)
-
-    tablero, barcos, demandas_filas, demandas_columnas = parsear_archivo("./archivos_pruebas/5_5_6.txt")
-    mejor_tablero, demanda_incumplida = batalla_naval(tablero, barcos, demandas_filas, demandas_columnas)
-    print(mejor_tablero, demanda_incumplida)
-
-    tablero, barcos, demandas_filas, demandas_columnas = parsear_archivo("./archivos_pruebas/8_7_10.txt")
-    mejor_tablero, demanda_incumplida = batalla_naval(tablero, barcos, demandas_filas, demandas_columnas)
-    print(mejor_tablero, demanda_incumplida)
-
-
-    tablero, barcos, demandas_filas, demandas_columnas = parsear_archivo("./archivos_pruebas/10_10_10.txt")
-    mejor_tablero, demanda_incumplida = batalla_naval(tablero, barcos, demandas_filas, demandas_columnas)
-    print(mejor_tablero, demanda_incumplida)
-
-    tablero, barcos, demandas_filas, demandas_columnas = parsear_archivo("./archivos_pruebas/12_12_21.txt")
-    mejor_tablero, demanda_incumplida = batalla_naval(tablero, barcos, demandas_filas, demandas_columnas)
-    print(mejor_tablero, demanda_incumplida)
-
-    tablero, barcos, demandas_filas, demandas_columnas = parsear_archivo("./archivos_pruebas/15_10_15.txt")
-    mejor_tablero, demanda_incumplida = batalla_naval(tablero, barcos, demandas_filas, demandas_columnas)
-    print(mejor_tablero, demanda_incumplida)
-
-    tablero, barcos, demandas_filas, demandas_columnas = parsear_archivo("./archivos_pruebas/20_20_20.txt")
-    mejor_tablero, demanda_incumplida = batalla_naval(tablero, barcos, demandas_filas, demandas_columnas)
-    print(mejor_tablero, demanda_incumplida)
-
-    tablero, barcos, demandas_filas, demandas_columnas = parsear_archivo("./archivos_pruebas/20_25_30.txt")
-    mejor_tablero, demanda_incumplida = batalla_naval(tablero, barcos, demandas_filas, demandas_columnas)
-    print(mejor_tablero, demanda_incumplida)
-
-    tablero, barcos, demandas_filas, demandas_columnas = parsear_archivo("./archivos_pruebas/30_25_25.txt")
-    mejor_tablero, demanda_incumplida = batalla_naval(tablero, barcos, demandas_filas, demandas_columnas)
-    print(mejor_tablero, demanda_incumplida) """
+    while current_ship < len(ships) and ships[current_ship] == ship:
+        current_ship += 1
+    naval_battle_BT(board, ships, current_ship, best_solution)

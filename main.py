@@ -3,6 +3,8 @@ import time
 import sys
 from excercise_1.test import suite as greedyTests
 from excercise_2.test_pd import suite as pdTests
+from excercise_3.tests_backtracking import suite as backTests
+
 COLOR_ROJO = "\033[1;31m"
 COLOR_VERDE = "\033[1;32m"
 COLOR_AMARILLO = "\033[1;33m"
@@ -56,7 +58,7 @@ def main():
             mostrar_mensaje("\n\t\tEjecutando pruebas Backtracking",COLOR_VERDE)
             mostrar_mensaje("Cargando...",COLOR_VERDE)
             mostrar_barra_progreso()
-            mostrar_mensaje("No hay pruebas de backtracking (aun...)",COLOR_ROJO)
+            ejecutar_suite(backTests())
         elif (valor == 0):
             mostrar_mensaje("Saliendo del programa...",COLOR_MAGENTA)
         else:

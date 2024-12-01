@@ -7,7 +7,7 @@
 - Theo Miguel
 - Brayan Ricaldi
 - Juan Francisco Gulden
-- Franco Altiera
+- Franco Altieri
 - Daniela Gómez
 
 ## Introducción

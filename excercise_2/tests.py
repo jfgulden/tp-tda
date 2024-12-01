@@ -36,4 +36,3 @@ if __name__ == "__main__":
     for nombre_archivo in archivos_tests:
         monedas = obtener_monedas_de_archivo(f"{TEST_FILES_PATH}{nombre_archivo}")
         mostrar_resultado(monedas, verbose)
-   

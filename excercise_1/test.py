@@ -1,4 +1,5 @@
 import unittest
+import time
 from excercise_1.greedy import obtener_ganador,obtener_monedas_de_archivo
 
 def resultado_test(resultado_obtenido,resultado_esperado):
@@ -9,6 +10,15 @@ def resultado_test(resultado_obtenido,resultado_esperado):
     print(f"Resultado esperado: {resultado_esperado}, Resultado obtenido: {resultado_obtenido}\n")
 
 class TestAlumnos(unittest.TestCase):
+
+    def run(self, resultado=None):
+        tiempo_inicio = time.time()  
+        super().run(resultado)  
+        tiempo_final = time.time()  
+        duracion = tiempo_final - tiempo_inicio  
+        print(f"{self._testMethodName} - Tiempo de ejecución: {duracion:.6f} segundos")  
+        print()
+
     def test_arreglo_ordenado_ascendentemente(self):
         print("--------SE PRUEBA UN ARREGLO ORDENADO ASCENDENTEMENTE--------")
         monedas = obtener_monedas_de_archivo("excercise_1/pruebas_alumnos/arregloOrdenadoAscendente.txt")
@@ -31,6 +41,14 @@ class TestAlumnos(unittest.TestCase):
         self.assertEqual(resultado,34)    
     
 class TestCatedra(unittest.TestCase):
+    def run(self, resultado=None):
+        tiempo_inicio = time.time()  
+        super().run(resultado)  
+        tiempo_final = time.time()  
+        duracion = tiempo_final - tiempo_inicio  
+        print(f"{self._testMethodName} - Tiempo de ejecución: {duracion:.6f} segundos")  
+        print()
+           
     def test_20_monedas(self):
         print("--------SE PRUEBA UN ARREGLO DE 20 MONEDAS--------")
         monedas = obtener_monedas_de_archivo("excercise_1/archivos_pruebas/20.txt")

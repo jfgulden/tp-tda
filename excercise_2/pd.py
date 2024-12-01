@@ -1,9 +1,5 @@
 import sys
 sys.setrecursionlimit(6000)
-<<<<<<< HEAD
-
-=======
->>>>>>> testing
 
 def obtener_monedas_de_archivo(file: str):
     """
@@ -80,23 +76,7 @@ def maxima_ganancia_sofia(monedas):
     reconstruir_solucion(monedas, matriz_solucion, 0, n-1, solucion)
     return solucion
 
-<<<<<<< HEAD
-
-if __name__ == "__main__":
-
-    if len(sys.argv) != 2:
-        print("Uso: python3 pd.py <archivo_prueba>")
-        sys.exit()
-        
-    monedas = obtener_monedas_de_archivo(sys.argv[1])
-    solucion = maxima_ganancia_sofia(monedas)
-    print(f"Archivo de prueba: {sys.argv[1]}")
-    print(f"Monedas sacadas por Sofia: {solucion}")
-    print(f"Monto obtenido por Sofia: {sum(solucion)}")
-
-=======
 '''
 Complejidad: O(n^2), siendo n la cantidad total de monedas. 
 TODO: Desarrollar análisis de complejidad.
 '''
->>>>>>> testing

@@ -6,8 +6,12 @@
 
 - Theo Miguel
 - Brayan Ricaldi
+<<<<<<< HEAD
 - Juan Francisco Gulden
 - Franco Altiera
+=======
+- Franco Altieri
+>>>>>>> testing
 - Daniela Gómez
 
 ## Introducción

@@ -161,7 +161,7 @@ if __name__ == "__main__":
 
 # La complejidad de este algoritmo depende de la cantidad de barcos y la cantidad de filas y columnas del tablero. En el peor
 # caso, el algoritmo intentará colocar cada barco en cada fila o columna, lo cual resulta en una complejidad de O(n * m * k),
-# donde n y m son las dimensiones del tablero y k es la cantidad de barcos. En la práctica, la complejidad es mucho menor ya
-# que el algoritmo no intenta colocar cada barco en cada fila o columna, sino que se enfoca en las filas o columnas con mayor
-# demanda, lo cual reduce significativamente la cantidad de iteraciones necesarias. Por lo tanto, la complejidad real del
-# algoritmo de aproximación es mucho menor que O(n * m * k) en la mayoría de los casos.
+# donde n y m son las dimensiones del tablero y k es la cantidad de barcos. En la práctica, la complejidad que se manifiesta
+# es mucho menor, ya que el algoritmo no intentará colocar cada barco en cada fila o columna, sino que intentará colocar
+# los barcos en las filas o columnas con mayor demanda. Por lo tanto, la complejidad real del algoritmo es mucho menor que
+# O(n * m * k), pero no se puede determinar con exactitud.

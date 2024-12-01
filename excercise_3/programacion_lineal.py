@@ -1,8 +1,34 @@
 import time
 import pulp
 from typing import List
-from parser import parsear_archivo
-import os  # Add this import
+import os  
+
+def parsear_archivo(
+    archivo: str,
+) -> Tuple[List[List[int]], List[int], List[int], List[int]]:
+    with open(archivo, "r") as file:
+        i = 0
+        demandas_filas = []
+        demandas_columnas = []
+        barcos = []
+
+        for index, line in enumerate(file):
+            if index < 2:
+                continue
+            if line.strip() == "":
+                i += 1
+                continue
+            if i == 0:
+                demandas_filas.append(int(line.strip()))
+            elif i == 1:
+                demandas_columnas.append(int(line.strip()))
+            elif i == 2:
+                barcos.append(int(line.strip()))
+
+    # print(f"demandas_filas: {demandas_filas}")
+    # print(f"demandas_columnas: {demandas_columnas}")
+    tablero = np.zeros((len(demandas_filas), len(demandas_columnas)), dtype=int)
+    return tablero, barcos, demandas_filas, demandas_columnas
 
 
 def batalla_naval_pl(barcos, demandas_filas, demandas_columnas):
@@ -27,24 +53,7 @@ def batalla_naval_pl(barcos, demandas_filas, demandas_columnas):
         tuples,
         cat="Binary",
     )
-
-    # # Variables auxiliares para las diferencias de filas y columnas
-    # demanda_insatisfecha_filas = pulp.LpVariable.dicts(
-    #     "demanda_insatisfecha_filas", range(filas), lowBound=0, cat="Integer"
-    # )
-    # demanda_insatisfecha_columnas = pulp.LpVariable.dicts(
-    #     "demanda_insatisfecha_columnas", range(columnas), lowBound=0, cat="Integer"
-    # )
-
-    # # Problema de programación lineal
-    # problema = pulp.LpProblem("Battleship", pulp.LpMinimize)
-
-    # # Función objetivo: minimizar la suma total de las diferencias
-    # problema += pulp.lpSum(
-    #     demanda_insatisfecha_filas[x] for x in range(filas)
-    # ) + pulp.lpSum(demanda_insatisfecha_columnas[y] for y in range(columnas))
-
-    # Problema: maximizar la cantidad de celdas ocupadas
+    
     problema = pulp.LpProblem("Battleship", pulp.LpMaximize)
 
     # Función objetivo: maximizar la cantidad de celdas ocupadas
@@ -103,10 +112,6 @@ def batalla_naval_pl(barcos, demandas_filas, demandas_columnas):
         # La suma de ocupadas no puede superar la demanda de la fila
         problema += suma_ocupadas_fila <= demandas_filas[f]
 
-        # # Definir la demanda insatisfecha
-        # problema += (
-        #     demanda_insatisfecha_filas[f] >= demandas_filas[f] - suma_ocupadas_fila
-        # )
 
     for c in range(columnas):
         suma_ocupadas_columna = pulp.lpSum(tablero[f, c] for f in range(filas))
@@ -114,11 +119,6 @@ def batalla_naval_pl(barcos, demandas_filas, demandas_columnas):
         # La suma de ocupadas no puede superar la demanda de la columna
         problema += suma_ocupadas_columna <= demandas_columnas[c]
 
-        # # Definir la demanda insatisfecha
-        # problema += (
-        #     demanda_insatisfecha_columnas[c]
-        #     >= demandas_columnas[c] - suma_ocupadas_columna
-        # )
 
     # Restricciones para la colocación válida de los barcos
     for x in range(filas):
@@ -271,10 +271,6 @@ def batalla_naval_pl(barcos, demandas_filas, demandas_columnas):
     # convert tablero into a matrix
     tablero = [[tablero[x, y].varValue for y in range(columnas)] for x in range(filas)]
 
-    # demanda_insatisfecha = sum(
-    #     demanda_insatisfecha_filas[x].varValue for x in range(filas)
-    # ) + sum(demanda_insatisfecha_columnas[y].varValue for y in range(columnas))
-
     # calcular demanda insatisfecha
     celdas_ocupadas = sum(tablero[x][y] for x in range(filas) for y in range(columnas))
 
@@ -297,10 +293,6 @@ if __name__ == "__main__":
     files.append("8_7_10")
     files.append("10_3_3")
     files.append("10_10_10")
-    # files.append("12_12_21")
-    # files.append("20_20_20")
-    # files.append("25_25_30")
-    # files.append("30_25_25")
 
     for file in files:
         print(f"File: {file}")

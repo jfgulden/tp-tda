@@ -1,12 +1,12 @@
 # Validador eficiente para demostrar que el problema es NP
-
 '''
 Requisitos:
-- No pueden haber barcos adyacentes.
+- No puede haber barcos adyacentes entre si.
 - Los barcos tienen un ancho de una celda.
 - Se debe cumplir con las restricciones para filas y columnas.
 - Se deben colocar todos los barcos.
 '''
+
 from typing import List
 
 def validate_diagonals(board: List[List[bool]], i: int, j: int):
@@ -16,6 +16,14 @@ def validate_diagonals(board: List[List[bool]], i: int, j: int):
 
     if i+1 < len(board) and j-1 >= 0:
         if board[i+1][j-1]:
+            return False
+        
+    if i-1 >= 0 and j+1 < len(board[0]):
+        if board[i-1][j+1]:
+            return False
+    
+    if i-1 >= 0 and j-1 >= 0:
+        if board[i-1][j-1]:
             return False
 
     return True
@@ -215,47 +223,6 @@ def naval_battle_validator(board: List[List[int]], boats: List[int], res_rows: L
 [0,0,0,0,0]
 [1,0,1,0,1]
 
-'''
-Analisis de complejidad:
-n: número de filas
-m: número de columnas
-k: número de barcos
-- La función validate_restrictions tiene una complejidad de O(m x n) por la validación de las restricciones de filas y columnas.
-- La función validate_boat tiene una complejidad de O(max(m, n) + k). En el peor caso, se recorre toda la fila o columna, y se recorre la lista de barcos.
-Para analizar la complejidad total de la función naval_battle_validator, se deben tener en cuenta los siguientes aspectos:
-- La función validate_restrictions se ejecuta una sola vez, por lo que su complejidad no se multiplica por la cantidad de barcos.
-- En el bucle, se recorren todas las filas y columnas del tablero. Podríamos llegar a pensar que en el peor de los casos, se haría n x m veces la llamada a validate_boat, pero esto no es así.
-    Dadas las restricciones de adyacencias impuestas, en un tablero podría haber como máximo x cantidad de barcos de longitud 1, siendo x ~= n/2 * m/2 + n/2 (si n es impar) + m/2 (si m es impar). Esto significa que se podría
-    hacer como máximo x llamadas a validate_boat. 
-    Para ilustrar esto, supongamos un tablero de 5x5 con barcos de tamaño 1:
-    [1,0,1,0,1]
-    [0,0,0,0,0]
-    [1,0,1,0,1]
-    [0,0,0,0,0]
-    [1,0,1,0,1]
-    La cantidad de barcos es de 5/2 * 5/2 + 5/2 + 5/2 = 2*2 + 2 + 2 ~= 8, por lo que se harían 8 llamadas a validate_boat, con un error de 1 para cuando n y m son impares.
-    Como x depende de las dimensiones del tablero, al tender a infinito, podríamos decir que la complejidad de la función naval_battle_validator es de O(m x n x (max(m, n) + k)). Pero hay que tener en cuenta que para
-    que esto suceda, los barcos deben tener un tamaño de 1, y si lo tuvieran, las operaciones realizadas en validate_boat se harían en O(1) en lugar de O(max(m, n) + k).
-    Dicho esto, concluimos en que el peor escenario posible se da cuando los barcos tienen un tamaño igual a la cantidad de filas o columnas del tablero. En este caso, x = m/2 + 1(si m es impar) ó x = n/2 + 1(si n es impar).
-    Volvamos al ejemplo de la matriz de 5x5 con barcos de tamaño 5, pero teniendo en cuenta esto. Quedaría de esta forma:
-    [1,1,1,1,1]     
-    [0,0,0,0,0]
-    [1,1,1,1,1]               
-    [0,0,0,0,0]
-    [1,1,1,1,1]
-
-        ó 
-
-    [1,0,1,0,1]
-    [1,0,1,0,1]
-    [1,0,1,0,1]
-    [1,0,1,0,1]
-    [1,0,1,0,1]
-
-    Es decir, se ejecutaría n/2 veces la función validate_boat, que tendría una complejidad de O(m) ó m/2 veces la función validate_boat, que tendría una complejidad de O(n).
-    Por lo tanto, considerando por ejemplo que la cantidad de barcos es n/2, la complejidad total de la función naval_battle_validator es bastante menor que O(m x n x (max(m, n) + k)), siendo O((m x n) - n/2 + n/2 x (m + k)) = O((m x n) + (n x m)) = O(m x n).
-
-'''
 
 # Test cases
 board = [

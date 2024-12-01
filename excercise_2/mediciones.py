@@ -11,12 +11,12 @@ from pd import maxima_ganancia_sofia
 # Este parámetro controla cuantas veces se ejecuta el algoritmo para cada
 # tamaño. Esto es conveniente para reducir el error estadístico en la medición
 # de tiempos. Al finalizar las ejecuciones, se promedian los tiempos obtenidos
-RUNS_PER_SIZE = 8
+RUNS_PER_SIZE = 2
 
 # Ajustar este valor si se quiere usar más de un proceso para medir los tiempos
 # de ejecución, o None para usar todos los procesadores disponibles. Si se usan
 # varios procesos, tener cuidado con el uso de memoria del sistema.
-MAX_WORKERS = (os.cpu_count() or 4) // 4
+MAX_WORKERS = 4
 
 
 def _time_run(algorithm, *args):
@@ -48,7 +48,7 @@ def get_random_array(size: int):
 
 # La variable x van a ser los valores del eje x de los gráficos en todo el notebook
 # Tamaño mínimo=100, tamaño máximo=10kk, cantidad de puntos=20
-x = np.linspace(100, 10_000_000, 20).astype(int)
+x = np.linspace(100, 10_000, 20).astype(int)
 
 results = time_algorithm(maxima_ganancia_sofia, x, lambda s: [get_random_array(s)])
 
@@ -75,7 +75,7 @@ print(f"Error cuadrático total: {r}")
 ax.plot(x, [c[0] * n * n + c[1] for n in x], 'r--', label="Ajuste")
 ax.legend()
 fig
-plt.savefig("excercise_1/mediciones.png")
+plt.savefig("excercise_2/mediciones.png")
 
 
 # Graficamos el error de ajuste
@@ -87,5 +87,5 @@ ax.plot(x, errors)
 ax.set_title('Error de ajuste')
 ax.set_xlabel('Tamaño del array')
 ax.set_ylabel('Error absoluto (s)')
-plt.savefig("excercise_1/error_ajuste.png")
+plt.savefig("excercise_2/error_ajuste.png")
 None

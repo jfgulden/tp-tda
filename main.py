@@ -59,7 +59,6 @@ def main():
             mostrar_mensaje("No hay pruebas de backtracking (aun...)",COLOR_ROJO)
         elif (valor == 0):
             mostrar_mensaje("Saliendo del programa...",COLOR_MAGENTA)
-            break
         else:
             mostrar_mensaje("Error intente nuevamente",COLOR_ROJO)
 

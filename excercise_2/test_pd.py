@@ -9,6 +9,49 @@ def resultado_test(resultado_obtenido, resultado_esperado):
         print("❌  Sophia NO obtiene la maxima ganancia posible")
     print(f"Resultado esperado: {resultado_esperado}, Resultado obtenido: {resultado_obtenido}\n")
 
+
+class TestAlumnos(unittest.TestCase):
+
+    def run(self, resultado=None):
+        tiempo_inicio = time.time()  
+        super().run(resultado)  
+        tiempo_final = time.time()  
+        duracion = tiempo_final - tiempo_inicio  
+        print(f"{self._testMethodName} - Tiempo de ejecución: {duracion:.6f} segundos")  
+        print()
+
+    def test_caso_simetrico(self):
+        print("--------SE PRUEBA UN ARREGLO SIMETRICO--------")
+        monedas = obtener_monedas_de_archivo("excercise_2/pruebas_alumnos/caso_simetrico.txt")
+        resultado = maxima_ganancia_sofia(monedas)
+        suma_total = sum(resultado)
+        resultado_test(suma_total, 6)
+        self.assertEqual(suma_total, 6)
+
+    def test_caso_valores_consecutivos_grandes_y_pequeños(self):
+        print("--------SE PRUEBA UN ARREGLO CON VALORES CONSECUTIVOS GRANDES Y PEQUEÑOS--------")
+        monedas = obtener_monedas_de_archivo("excercise_2/pruebas_alumnos/caso_valores_consecutivos_grandes_y_pequeños.txt")
+        resultado = maxima_ganancia_sofia(monedas)
+        suma_total = sum(resultado)
+        resultado_test(suma_total, 30)
+        self.assertEqual(suma_total, 30)
+
+    def test_caso_valores_grandes_en_extremos(self):
+        print("--------SE PRUEBA UN ARREGLO CON VALORES GRANDES EN SUS EXTREMOS--------")
+        monedas = obtener_monedas_de_archivo("excercise_2/pruebas_alumnos/caso_con_valores_grandes_en_extremos.txt")
+        resultado = maxima_ganancia_sofia(monedas)
+        suma_total = sum(resultado)
+        resultado_test(suma_total, 12)
+        self.assertEqual(suma_total, 12)
+
+    def test_caso_unico_valor_alto(self):
+        print("--------SE PRUEBA UN ARREGLO CON UN UNICO VALOR GRANDE--------")
+        monedas = obtener_monedas_de_archivo("excercise_2/pruebas_alumnos/caso_unico_valor_alto.txt")
+        resultado = maxima_ganancia_sofia(monedas)
+        suma_total = sum(resultado)
+        resultado_test(suma_total, 52)
+        self.assertEqual(suma_total, 52)
+
 class TestCatedra(unittest.TestCase):
 
     def run(self, resultado=None):
@@ -102,6 +145,12 @@ class TestCatedra(unittest.TestCase):
 
 def suite():
     suite = unittest.TestSuite()
+
+    suite.addTest(TestAlumnos('test_caso_simetrico'))
+    suite.addTest(TestAlumnos('test_caso_valores_consecutivos_grandes_y_pequeños'))
+    suite.addTest(TestAlumnos('test_caso_valores_grandes_en_extremos'))
+    suite.addTest(TestAlumnos('test_caso_unico_valor_alto'))
+
     suite.addTest(TestCatedra('test_5_monedas'))
     suite.addTest(TestCatedra('test_10_monedas'))
     suite.addTest(TestCatedra('test_20_monedas'))

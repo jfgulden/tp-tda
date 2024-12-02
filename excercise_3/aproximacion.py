@@ -121,6 +121,21 @@ def read_file(path):
 
     return demandas_filas, demandas_columnas, barcos
 
+def calculate_demand(files):
+    for file in files:
+        file_name = file.split("/")[-1]
+        print(f"File: {file_name}")
+        demands_rows, demands_cols, ships = read_file(file)
+        demanda_inicial = np.sum(demands_rows) + np.sum(demands_cols)
+        result_board = naval_approximation(demands_rows, demands_cols, ships)
+        demanda_insatisfecha = np.sum(demands_rows) + np.sum(demands_cols)
+        print(f"\n{result_board}\n")
+        print(f"Demanda insatisfecha: {demanda_insatisfecha}")
+        print(f"Demanda cumplida: {demanda_inicial - demanda_insatisfecha}")
+        print(f"Demanda inicial: {demanda_inicial}")
+        print("======================================")
+
+    
 
 if __name__ == "__main__":
 
@@ -136,22 +151,8 @@ if __name__ == "__main__":
         "excercise_3/archivos_pruebas/TP3/20_25_30.txt",
         "excercise_3/archivos_pruebas/TP3/30_25_25.txt",
     ]
-
-    for file in files:
-        file_name = file.split("/")[-1]
-        print(f"File: {file_name}")
-        demands_rows, demands_cols, ships = read_file(file)
-        demanda_inicial = np.sum(demands_rows) + np.sum(demands_cols)
-        result_board = naval_approximation(demands_rows, demands_cols, ships)
-        demanda_insatisfecha = np.sum(demands_rows) + np.sum(demands_cols)
-        print()
-        print(result_board)
-        print()
-        print(f"Demanda insatisfecha: {demanda_insatisfecha}")
-        print(f"Demanda cumplida: {demanda_inicial - demanda_insatisfecha}")
-        print(f"Demanda inicial: {demanda_inicial}")
-        print("======================================")
-
+    calculate_demand(files)
+    
 
 # Analisis complejidad
 # El algoritmo de aproximación es una heurística que intenta colocar los barcos en las filas o columnas con mayor demanda,

@@ -79,25 +79,6 @@ def maxima_ganancia_sofia(monedas):
     return solucion
 
 if __name__ == "__main__":
-<<<<<<< Updated upstream
-    if len(sys.argv) != 2:
-        print("Uso: python3 excercise_2/pd.py <archivo>")
-        sys.exit(1)
-
-    archivo = sys.argv[1]
-    try:
-        monedas = obtener_monedas_de_archivo(archivo)
-        resultado = maxima_ganancia_sofia(monedas)
-        suma_total = sum(resultado)
-        print(f"Sofia obtiene la maxima ganancia posible y es: {suma_total}")
-    except Exception as e:
-        print(f"Error al procesar el archivo: {e}")
-        
-'''
-Complejidad: O(n^2), siendo n la cantidad total de monedas. 
-TODO: Desarrollar análisis de complejidad.
-'''
-=======
 
     if len(sys.argv) != 2:
         print("La cantidad de argumentos es incorrecta")
@@ -112,4 +93,3 @@ TODO: Desarrollar análisis de complejidad.
     print(f"Monedas sacadas por Sofia: {solucion}")
     print(f"Monto obtenido por Sofia: {sum(solucion)}")
     print(f"Tiempo de ejecución: {end_time - start_time:.6f} segundos")
->>>>>>> Stashed changes

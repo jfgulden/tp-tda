@@ -89,4 +89,32 @@ if __name__ == '__main__':
     ax.set_xlabel('Tamaño del array')
     ax.set_ylabel('Error absoluto (s)')
     plt.savefig("excercise_2/error_ajuste.png")
-    None
+    None 
+
+    """
+    Nos interesa medir los tiempos de ejecucion para valores de monedas que varíen en rango
+    Para esto tenemos una carpeta 'tests_distintos_rangos', en donde se encuentran distintos archivos de prueba con monedas que varían en rango, con la misma cantidad de monedas.
+    """
+    archivos_tests = [archivo for archivo in  os.listdir("excercise_2/tests_distintos_rangos") if archivo.endswith('.txt')]
+    archivos_tests.sort(key=lambda archivo: int(archivo.split('_')[2].split('.')[0]))
+    cantidad_monedas = [nombre_archivo.split('_')[2].split('.')[0] for nombre_archivo in archivos_tests]
+    execution_times = []
+    for file in archivos_tests:
+        file = open(f"excercise_2/tests_distintos_rangos/{file}", "r")
+        file.readline()
+        monedas = list(map(int, file.readline().strip().split(';')))
+        start_time = time.time()
+        maxima_ganancia_sofia(monedas)
+        end_time = time.time()
+        execution_times.append(end_time - start_time)
+        
+    fig = plt.figure(figsize = (10, 5))
+
+    # creating the bar plot
+    plt.bar(cantidad_monedas, execution_times, color ='tab:blue', width = 0.4)
+    plt.xlabel("Rango (desde cero hasta el valor)")
+    plt.ylabel("Tiempo de ejecución (s)")
+    plt.title("Tiempos de ejecución para distintos rangos de monedas")
+    plt.savefig("excercise_2/tiempos_ejecucion_rangos_distintos.png")  # Guardar el gráfico en un archivo
+    plt.close()  # Cierra la figura para liberar memoria
+        

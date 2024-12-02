@@ -1,5 +1,8 @@
 import unittest
+import sys
+import os
 import time
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from excercise_1.greedy import obtener_ganador,obtener_monedas_de_archivo
 
 def resultado_test(resultado_obtenido,resultado_esperado):

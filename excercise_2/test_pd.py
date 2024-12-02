@@ -1,6 +1,9 @@
 import unittest
-from excercise_2.pd import maxima_ganancia_sofia, obtener_monedas_de_archivo
+import sys
+import os
 import time
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+from excercise_2.pd import maxima_ganancia_sofia, obtener_monedas_de_archivo
 
 def resultado_test(resultado_obtenido, resultado_esperado):
     if resultado_obtenido == resultado_esperado:

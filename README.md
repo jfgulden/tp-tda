@@ -33,8 +33,9 @@ sudo apt-get install python3
 ### Ejecución de tests
 
 Cada carpeta contiene los tests realizados para la parte correspondiente.
-Para ejecutar los tests, simplemente se debe correr el archivo tests.py en cada carpeta.
-Se detallarán las instrucciones específicas para cada parte a continuación.
+Para ejecutar los tests, tiene dos opciones diferentes:
+- **Opción 1**: se provee un archivo `main.py` en el cual,al ejecutarlo con el comando `python3 main.py` se despliega un menú con los tests de la cátedra y de los alumnos con sus algoritmos correspondientes.
+- **Opción 2**: simplemente se debe correr el archivo `tests.py` en cada carpeta. Se detallarán las instrucciones específicas para cada parte a continuación.
 
 ### Ejecución de los algoritmos
 
@@ -45,7 +46,7 @@ Para correr cada algoritmo, se debe ejecutar el archivo correspondiente a cada p
 Para correr las pruebas de la parte 1, se debe ejecutar el siguiente comando en la terminal:
 
 ```python
-python3 excercise_1/tests.py
+python3 excercise_1/test.py
 ```
 
 Este comando correrá los tests provistos por la cátedra y los tests adicionales que realizamos.
@@ -63,7 +64,7 @@ Este comando correrá el algoritmo greedy implementado.
 Para correr las pruebas de la parte 2, se debe ejecutar el siguiente comando en la terminal:
 
 ```python
-python3 excercise_2/tests.py
+python3 excercise_2/test_pd.py
 ```
 
 Este comando correrá los tests provistos por la cátedra y los tests adicionales que realizamos.
@@ -71,7 +72,7 @@ Este comando correrá los tests provistos por la cátedra y los tests adicionale
 De la misma manera, para correr el algoritmo implementado, se debe ejecutar el siguiente comando en la terminal, al que se le debe pasar como argumento el archivo de entrada. Dicho archivo debe contener todas las monedas en el orden deseado separadas entre sí única y exclusivamente por un `;` en la primera línea del archivo:
 
 ```python
-python3 excercise_2/dp.py <archivo>
+python3 excercise_2/pd.py <archivo>
 ```
 
 Este comando correrá el algoritmo implementado.
@@ -83,7 +84,7 @@ Este comando correrá el algoritmo implementado.
 Para correr las pruebas de la parte 3, se debe ejecutar el siguiente comando en la terminal:
 
 ```python
-python3 excercise_3/tests.py
+python3 excercise_3/tests_backtracking.py
 ```
 
 Este comando correrá los tests provistos por la cátedra y los tests adicionales que realizamos.

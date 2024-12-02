@@ -1,7 +1,7 @@
 import sys
-import os
 from enum import Enum
 from typing import List
+import sys
 import time
 
 
@@ -286,17 +286,8 @@ def naval_battle_BT(
         current_ship += 1
     naval_battle_BT(board, ships, current_ship, best_solution)
     
-    
-def parsear_archivo(filename: str) -> tuple[list[int], list[int], list[int]]:
-    if not os.path.isabs(filename):
-        base_path = "excercise_3/archivos_pruebas/TP3"
-        path = os.path.join(base_path, filename)
-    else:
-        path = filename
-
-    if not os.path.exists(path):
-        raise FileNotFoundError(f"El archivo no existe: {path}")
-    with open(path, "r") as file:
+def parsear_archivo(filepath: str) -> tuple[list[int], list[int], list[int]]:
+    with open(filepath, "r") as file:
         i = 0
         demandas_filas = []
         demandas_columnas = []

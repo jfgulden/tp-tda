@@ -12,7 +12,7 @@ class GameTest:
         self.file = file
 
     def run_naval_battle(self):
-        barcos, demands_rows, demands_columns = parsear_archivo(self.file)
+        barcos, demands_rows, demands_columns = parsear_archivo(f"excercise_3/archivos_pruebas/{self.file}")
         remaining_demand = batalla_naval(barcos, demands_rows[:], demands_columns[:])
         demand_fullfilled = (
             sum(demands_rows) + sum(demands_columns) - remaining_demand

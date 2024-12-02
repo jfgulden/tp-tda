@@ -1,5 +1,6 @@
 import numpy as np
-
+import sys
+import time
 
 def is_valid_placement(board, row, col, length, horizontal, demand_rows, demand_cols):
 
@@ -95,7 +96,7 @@ def naval_approximation(demands_rows, demands_cols, ships):
         if not placed:
             break
 
-    return board
+    return sum(demands_rows) + sum(demands_cols)
 
 
 def read_file(path):
@@ -139,6 +140,7 @@ def calculate_demand(files):
 
 if __name__ == "__main__":
 
+<<<<<<< HEAD
     files = [
         "excercise_3/archivos_pruebas/TP3/3_3_2.txt",
         "excercise_3/archivos_pruebas/TP3/5_5_6.txt",
@@ -153,6 +155,24 @@ if __name__ == "__main__":
     ]
     calculate_demand(files)
     
+=======
+    if len(sys.argv) != 2:
+        print("La cantidad de argumentos es incorrecta")
+        print("Uso: python3 backtracking.py <archivo_prueba>")
+        sys.exit()
+    
+    start_time = time.time()
+    barcos, demandas_filas, demandas_columnas = read_file(sys.argv[1])
+    demanda_incumplida = naval_approximation(barcos, demandas_filas, demandas_columnas)
+    demanda_cumplida = (
+        sum(demandas_filas) + sum(demandas_columnas) - demanda_incumplida
+    )
+    end_time = time.time()
+    print(f"Demanda total: {sum(demandas_filas) + sum(demandas_columnas)}")
+    print(f"Demanda cumplida: {demanda_cumplida}")
+    print(f"Demanda incumplida aproximada: {demanda_incumplida}")
+    print(f"Tiempo de ejecución: {end_time - start_time:.6f} segundos")
+>>>>>>> 6a311b4 (fix main aproximacion)
 
 # Analisis complejidad
 # El algoritmo de aproximación es una heurística que intenta colocar los barcos en las filas o columnas con mayor demanda,

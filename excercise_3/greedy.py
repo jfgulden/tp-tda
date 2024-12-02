@@ -2,6 +2,8 @@ import numpy as np
 import math
 from enum import Enum
 from typing import List
+import sys
+import time
 
 class Orientacion(Enum):
     Horizontal = 1
@@ -183,9 +185,8 @@ def batalla_naval(
 
     return sum(demandas.filas) + sum(demandas.columnas)
 
-def parsear_archivo(filename: str) -> tuple[list[int], list[int], list[int]]:
-    path: str = f"excercise_3/archivos_pruebas/TP3/{filename}"
-    with open(path, "r") as file:
+def parsear_archivo(filepath: str) -> tuple[list[int], list[int], list[int]]:
+    with open(filepath, "r") as file:
         i = 0
         demandas_filas = []
         demandas_columnas = []
@@ -207,9 +208,24 @@ def parsear_archivo(filename: str) -> tuple[list[int], list[int], list[int]]:
     return barcos, demandas_filas, demandas_columnas
 
 if __name__ == "__main__":
-    barcos, demandas_filas, demandas_columnas = parsear_archivo("20_20_20.txt")
-    print(batalla_naval(barcos, demandas_filas, demandas_columnas))
+    if len(sys.argv) != 2:
+        print("La cantidad de argumentos es incorrecta")
+        print("Uso: python3 backtracking.py <archivo_prueba>")
+        sys.exit()
     
+    start_time = time.time()
+    barcos, demandas_filas, demandas_columnas = parsear_archivo(sys.argv[1])
+    demanda_incumplida = batalla_naval(barcos, demandas_filas, demandas_columnas)
+    demanda_cumplida = (
+        sum(demandas_filas) + sum(demandas_columnas) - demanda_incumplida
+    )
+    end_time = time.time()
+    print(f"Demanda total: {sum(demandas_filas) + sum(demandas_columnas)}")
+    print(f"Demanda cumplida: {demanda_cumplida}")
+    print(f"Demanda incumplida aproximada: {demanda_incumplida}")
+    print(f"Tiempo de ejecución: {end_time - start_time:.6f} segundos")
+
+
     
         
     

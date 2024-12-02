@@ -1,4 +1,5 @@
 import sys
+import time
 def obtener_ganador(monedas):
     # Turno Sophia: Agarra la moneda más grande
     # Turno Mateo: Agarra la moneda más chica
@@ -38,8 +39,11 @@ if __name__ == "__main__":
     archivo = sys.argv[1]
     try:
         monedas = obtener_monedas_de_archivo(archivo)
+        start_time = time.time()
         resultado = obtener_ganador(monedas)
-        print(f"Sofia obtiene la maxima ganancia y es: {resultado}")
+        end_time = time.time()
+        print(f"Monto obtenido por Sofia: {resultado}")
+        print(f"Tiempo de ejecución: {end_time - start_time:.6f} segundos")
     except Exception as e:
         print(f"Error al procesar el archivo: {e}")
 """

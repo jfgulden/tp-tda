@@ -79,7 +79,6 @@ def maxima_ganancia_sofia(monedas):
     return solucion
 
 if __name__ == "__main__":
-
     if len(sys.argv) != 2:
         print("La cantidad de argumentos es incorrecta")
         print("Uso: python3 pd.py <archivo_prueba>")

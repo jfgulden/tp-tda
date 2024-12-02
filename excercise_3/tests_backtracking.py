@@ -3,7 +3,7 @@ import sys
 import os
 import time
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-from excercise_3.backtracking import naval_battle
+from excercise_3.backtracking import naval_battle, parsear_archivo
 
 def resultado_test(resultado_obtenido,resultado_esperado):
     if(resultado_obtenido == resultado_esperado):
@@ -17,36 +17,12 @@ class GameTest:
         self.file = file
 
     def run_naval_battle(self):
-        barcos, demands_rows, demands_columns = self.parsear_archivo()
+        barcos, demands_rows, demands_columns = parsear_archivo(self.file)
         result = naval_battle(barcos, demands_rows, demands_columns)
         demand_fullfilled = (
             sum(demands_rows) + sum(demands_columns) - result.remaining_demand
         )
         return demand_fullfilled
-
-    def parsear_archivo(self) -> tuple[list[int], list[int], list[int]]:
-        path: str = f"excercise_3/archivos_pruebas/TP3/{self.file}"
-        with open(path, "r") as file:
-            i = 0
-            demandas_filas = []
-            demandas_columnas = []
-            barcos = []
-
-            for index, line in enumerate(file):
-                if index < 2:
-                    continue
-                if line.strip() == "":
-                    i += 1
-                    continue
-                if i == 0:
-                    demandas_filas.append(int(line.strip()))
-                elif i == 1:
-                    demandas_columnas.append(int(line.strip()))
-                elif i == 2:
-                    barcos.append(int(line.strip()))
-
-        return barcos, demandas_filas, demandas_columnas
-
 
 class TestBacktraking(unittest.TestCase):
 

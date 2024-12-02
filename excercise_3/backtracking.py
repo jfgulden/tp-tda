@@ -1,7 +1,8 @@
 import sys
 from enum import Enum
 from typing import List
-
+import sys
+import time
 
 
 class Orientation(Enum):
@@ -284,6 +285,7 @@ def naval_battle_BT(
     while current_ship < len(ships) and ships[current_ship] == ship:
         current_ship += 1
     naval_battle_BT(board, ships, current_ship, best_solution)
+<<<<<<< Updated upstream
 
 
 class GameTest:
@@ -346,3 +348,49 @@ if __name__ == "__main__":
 
     resultado = game_test.run_naval_battle()
     print(f"Resultado del cumplimiento de la demanda: {resultado}")
+=======
+    
+    
+def parsear_archivo(filename: str) -> tuple[list[int], list[int], list[int]]:
+    path: str = f"excercise_3/archivos_pruebas/TP3/{filename}"
+    with open(path, "r") as file:
+        i = 0
+        demandas_filas = []
+        demandas_columnas = []
+        barcos = []
+
+        for index, line in enumerate(file):
+            if index < 2:
+                continue
+            if line.strip() == "":
+                i += 1
+                continue
+            if i == 0:
+                demandas_filas.append(int(line.strip()))
+            elif i == 1:
+                demandas_columnas.append(int(line.strip()))
+            elif i == 2:
+                barcos.append(int(line.strip()))
+
+    return barcos, demandas_filas, demandas_columnas
+
+
+if __name__ == "__main__":
+    
+    if len(sys.argv) != 2:
+        print("La cantidad de argumentos es incorrecta")
+        print("Uso: python3 backtracking.py <archivo_prueba>")
+        sys.exit()
+    
+    start_time = time.time()
+    barcos, demands_rows, demands_columns = parsear_archivo(sys.argv[1])
+    resultado = naval_battle(barcos, demands_rows, demands_columns)
+    demand_fullfilled = (
+        sum(demands_rows) + sum(demands_columns) - resultado.remaining_demand
+    )
+    end_time = time.time()
+    print(f"Demanda total: {sum(demands_rows) + sum(demands_columns)}")
+    print(f"Demanda cumplida: {demand_fullfilled}")
+    print(f"Demanda incumplida: {resultado.remaining_demand}")
+    print(f"Tiempo de ejecución: {end_time - start_time:.6f} segundos")
+>>>>>>> Stashed changes

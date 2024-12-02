@@ -1,5 +1,7 @@
 import sys
+import time
 sys.setrecursionlimit(6000)
+
 
 def obtener_monedas_de_archivo(file: str):
     """
@@ -77,6 +79,7 @@ def maxima_ganancia_sofia(monedas):
     return solucion
 
 if __name__ == "__main__":
+<<<<<<< Updated upstream
     if len(sys.argv) != 2:
         print("Uso: python3 excercise_2/pd.py <archivo>")
         sys.exit(1)
@@ -94,3 +97,19 @@ if __name__ == "__main__":
 Complejidad: O(n^2), siendo n la cantidad total de monedas. 
 TODO: Desarrollar análisis de complejidad.
 '''
+=======
+
+    if len(sys.argv) != 2:
+        print("La cantidad de argumentos es incorrecta")
+        print("Uso: python3 pd.py <archivo_prueba>")
+        sys.exit()
+    
+    
+    monedas = obtener_monedas_de_archivo(sys.argv[1])
+    start_time = time.time()
+    solucion = maxima_ganancia_sofia(monedas)
+    end_time = time.time()
+    print(f"Monedas sacadas por Sofia: {solucion}")
+    print(f"Monto obtenido por Sofia: {sum(solucion)}")
+    print(f"Tiempo de ejecución: {end_time - start_time:.6f} segundos")
+>>>>>>> Stashed changes

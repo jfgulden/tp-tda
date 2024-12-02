@@ -257,6 +257,7 @@ def naval_battle_BT(
     for i in range(i_start, n):
         if board.demands_rows[i] == 0:
             continue
+        range_j = range(j_start, m) if i == i_start else range(0, m)
         for j in range(0, m):
             if i == i_start and j < j_start:
                 continue

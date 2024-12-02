@@ -1,6 +1,7 @@
 import unittest
 import time
-from excercise_3.backtracking import naval_battle
+# from excercise_3.backtracking import naval_battle
+from backtracking import naval_battle
 
 def resultado_test(resultado_obtenido,resultado_esperado):
     if(resultado_obtenido == resultado_esperado):

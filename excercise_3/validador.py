@@ -52,7 +52,7 @@ def validate_restrictions(board: List[List[bool]], boats: List[int], res_rows: L
     """
     Complejidad: O(m x n) + O(m x n) + O(m x n) = O(m x n)
     """
-
+    
     # Verificar restricciones de filas
     for i in range(len(board)): # O(n)
         if sum(board[i]) != res_rows[i]:    # O(m)
@@ -183,8 +183,6 @@ def validate_boat(board: List[List[bool]], boats, i: int, j: int):
     
     return False
 
-
-
     
 def naval_battle_validator(board: List[List[int]], boats: List[int], res_rows: List[int], res_cols: List[int]):
     """
@@ -266,9 +264,11 @@ board = [
     [0, 0, 0 , 1, 1, 0, 0, 0, 1, 0],
     [0, 0, 0 , 0, 0, 0, 0, 0, 0, 0],
 ]
+
 boats = [3,1,1,2,4,2,1,3,1,2]
 res_rows = [3,2,2,4,2,1,1,2,3,0]
 res_cols = [1,2,1,3,2,2,3,1,5,0]
+
 print("Test5: True, Ejemplo consigna")
 print(naval_battle_validator(board, boats, res_rows, res_cols)) # True
 print()
@@ -286,9 +286,11 @@ board = [
     [0, 0, 0, 0, 1],
     [0, 1, 1, 0, 1]
 ]
+
 boats = [1, 2, 4]
 res_rows = [2,2,1,3]
 res_cols = [1,1,2,0,4]
+
 print("Test5: False. Hay un barco de más (1,2)")
 print(naval_battle_validator(board, boats, res_rows, res_cols)) # False: hay un barco de más (1,2)
 print()
@@ -301,9 +303,11 @@ board = [
     [0, 0, 0, 0, 1],
     [0, 1, 1, 0, 1]
 ]
+
 boats = [1, 2, 4, 1]
 res_rows = [2,2,1,3]
 res_cols = [1,2,1,0,5]
+
 print("Test6: False, No se cumplen las restricciones de columnas")
 print(naval_battle_validator(board, boats, res_rows, res_cols)) # False: No se cumplen las restricciones de columnas
 
@@ -313,13 +317,14 @@ board = [
     [0, 0, 0, 0, 1],
     [0, 1, 1, 0, 1]
 ]
+
 boats = [1, 2, 4, 1]
 res_rows = [2,1,1,3]
 res_cols = [1,1,1,0,4]
+
 print("Test7: False, No se colocaron todos los barcos")
 print(naval_battle_validator(board, boats, res_rows, res_cols)) # False: Queda un barco sin poner
 print()
-
 
 ## Por barcos adyacentes ##
 
@@ -330,9 +335,11 @@ board = [
     [0, 0, 0, 0, 1],
     [0, 1, 1, 0, 1]
 ]
+
 boats = [1, 2, 4]
 res_rows = [2,2,1,4]
 res_cols = [1,2,1,0,4]
+
 print("Test8: False, No se cumplen las restricciones de filas")
 print(naval_battle_validator(board, boats, res_rows, res_cols)) # False: No se cumplen las restricciones de filas
 print()
@@ -343,9 +350,11 @@ board = [
     [1, 1, 1],
     [0, 0, 1]
 ]
+
 boats = [2, 3]
 res_rows = [1,3,1]
 res_cols = [1,1,3]
+
 print("Test9: False, Hay un barco adyacente a la derecha")
 print(naval_battle_validator(board, boats, res_rows, res_cols)) # False: Hay un barco adyacente a la derecha
 print()
@@ -356,9 +365,11 @@ board = [
     [0, 1, 0],
     [0, 1, 0]
 ]
+
 boats = [2, 3]
 res_rows = [3,1,1]
 res_cols = [1,3,1]
+
 print("Test10: False, Hay un barco adyacente abajo")
 print(naval_battle_validator(board, boats, res_rows, res_cols)) # False: Hay un barco adyacente abajo
 print()
@@ -371,9 +382,11 @@ board = [
     [0, 0, 0, 0, 1],
     [0, 1, 1, 0, 1]
 ]
+
 boats = [2, 2]
 res_rows = [1,2,1]
 res_cols = [3,0,1]
+
 print("Test11: False, Hay dos barcos de tamaño incorrecto")
 print(naval_battle_validator(board, boats, res_rows, res_cols)) # False: Hay dos barcos de tamaño incorrecto
 print()
@@ -390,6 +403,7 @@ board = [
 boats = [1, 1]
 res_rows = [2,0,0]
 res_cols = [1,1,0]
+
 print("Test12: False, Hay 2 barcos tamaño 1 adyacentes")
 print(naval_battle_validator(board, boats, res_rows, res_cols)) # False: Hay 2 barcos tamaño 1 adyacentes
 print()

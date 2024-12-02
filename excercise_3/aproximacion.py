@@ -1,6 +1,21 @@
 import numpy as np
+
 import sys
 import time
+# excercise_3/archivos_pruebas
+FILES = [
+        "excercise_3/archivos_pruebas/TP3/3_3_2.txt",
+        "excercise_3/archivos_pruebas/TP3/5_5_6.txt",
+        "excercise_3/archivos_pruebas/TP3/8_7_10.txt",
+        "excercise_3/archivos_pruebas/TP3/10_3_3.txt",
+        "excercise_3/archivos_pruebas/TP3/10_10_10.txt",
+        "excercise_3/archivos_pruebas/TP3/12_12_21.txt",
+        "excercise_3/archivos_pruebas/TP3/15_10_15.txt",
+        "excercise_3/archivos_pruebas/TP3/20_20_20.txt",
+        "excercise_3/archivos_pruebas/TP3/20_25_30.txt",
+        "excercise_3/archivos_pruebas/TP3/30_25_25.txt",
+    ]
+
 
 def is_valid_placement(board, row, col, length, horizontal, demand_rows, demand_cols):
 
@@ -122,8 +137,8 @@ def read_file(path):
 
     return demandas_filas, demandas_columnas, barcos
 
-def calculate_demand(files):
-    for file in files:
+def calculate_demand():
+    for file in FILES:
         file_name = file.split("/")[-1]
         print(f"File: {file_name}")
         demands_rows, demands_cols, ships = read_file(file)
@@ -135,32 +150,8 @@ def calculate_demand(files):
         print(f"Demanda cumplida: {demanda_inicial - demanda_insatisfecha}")
         print(f"Demanda inicial: {demanda_inicial}")
         print("======================================")
-
-    
-
-if __name__ == "__main__":
-
-<<<<<<< HEAD
-    files = [
-        "excercise_3/archivos_pruebas/TP3/3_3_2.txt",
-        "excercise_3/archivos_pruebas/TP3/5_5_6.txt",
-        "excercise_3/archivos_pruebas/TP3/8_7_10.txt",
-        "excercise_3/archivos_pruebas/TP3/10_3_3.txt",
-        "excercise_3/archivos_pruebas/TP3/10_10_10.txt",
-        "excercise_3/archivos_pruebas/TP3/12_12_21.txt",
-        "excercise_3/archivos_pruebas/TP3/15_10_15.txt",
-        "excercise_3/archivos_pruebas/TP3/20_20_20.txt",
-        "excercise_3/archivos_pruebas/TP3/20_25_30.txt",
-        "excercise_3/archivos_pruebas/TP3/30_25_25.txt",
-    ]
-    calculate_demand(files)
-    
-=======
-    if len(sys.argv) != 2:
-        print("La cantidad de argumentos es incorrecta")
-        print("Uso: python3 backtracking.py <archivo_prueba>")
-        sys.exit()
-    
+        
+def calculate_time():
     start_time = time.time()
     barcos, demandas_filas, demandas_columnas = read_file(sys.argv[1])
     demanda_incumplida = naval_approximation(barcos, demandas_filas, demandas_columnas)
@@ -172,7 +163,15 @@ if __name__ == "__main__":
     print(f"Demanda cumplida: {demanda_cumplida}")
     print(f"Demanda incumplida aproximada: {demanda_incumplida}")
     print(f"Tiempo de ejecución: {end_time - start_time:.6f} segundos")
->>>>>>> 6a311b4 (fix main aproximacion)
+
+if __name__ == "__main__":
+    #if len(sys.argv) != 2:
+    #    print("La cantidad de argumentos es incorrecta")
+    #    print("Uso: python3 aproximacion.py <archivo_prueba>")
+    #    sys.exit()
+    calculate_demand()
+    #calculate_time()
+
 
 # Analisis complejidad
 # El algoritmo de aproximación es una heurística que intenta colocar los barcos en las filas o columnas con mayor demanda,

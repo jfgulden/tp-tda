@@ -1,0 +1,19 @@
+---------ArregloOrdenadoAscendente---------
+
+Monedas_Sofia = [7,6,5,4]
+Valor esperado Sofia: 22
+
+---------ArregloOrdenadoDescendente---------
+
+Monedas_Sofia = [10 , 9 , 8 , 7]
+Valor esperado Sofia: 34
+
+--------ArregloValoresIgualesExceptoUno---------
+
+Monedas_Sofia = [1 , 1 , 1 , 1 , 1 , 1 , 1 , 1 , 2 , 1 , 1]
+Valor esperado Sofia: 12
+
+---------ArregloValoresMaximosEnExtremos---------
+
+Monedas_Sofia = [10 , 9 , 7 , 5 , 3]
+Valor esperado Sofia: 34

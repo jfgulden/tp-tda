@@ -1,0 +1,20 @@
+----------------Caso Simetrico----------------
+
+monedas Sofia: [1 , 3 , 2]
+valor maximo posible Sofia: 6
+
+----------------Caso valores consecutivos grandes y pequeños----------------
+
+monedas Sofia: [10 , 10 , 10]
+valor maximo posible Sofia : 30
+
+
+----------------Caso valores grandes en sus extremos ----------------
+
+monedas Sofia: [10 , 1 , 1]
+valor maximo posible Sofia : 12
+
+----------------Caso unico valor grande----------------
+
+monedas Sofia:[1, 50 , 1]
+valor maximo posible Sofia : 52

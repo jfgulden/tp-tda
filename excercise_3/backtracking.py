@@ -1,5 +1,7 @@
+import sys
 from enum import Enum
 from typing import List
+
 
 
 class Orientation(Enum):
@@ -282,3 +284,65 @@ def naval_battle_BT(
     while current_ship < len(ships) and ships[current_ship] == ship:
         current_ship += 1
     naval_battle_BT(board, ships, current_ship, best_solution)
+
+
+class GameTest:
+    def __init__(self, file: str):
+        self.file = file
+
+    def run_naval_battle(self):
+        try:
+            barcos, demands_rows, demands_columns = self.parsear_archivo()
+            result = naval_battle(barcos, demands_rows, demands_columns)
+            demand_fullfilled = (
+                sum(demands_rows) + sum(demands_columns) - result.remaining_demand
+            )
+            return demand_fullfilled
+        except Exception as e:
+            print(f"Ocurrió un error al ejecutar el algoritmo: {e}")
+            sys.exit(1)
+
+    def parsear_archivo(self) -> tuple[list[int], list[int], list[int]]:
+        try:
+            path: str = f"{self.file}"
+            with open(path, "r") as file:
+                i = 0
+                demandas_filas = []
+                demandas_columnas = []
+                barcos = []
+
+                for index, line in enumerate(file):
+                    if index < 2:
+                        continue
+                    if line.strip() == "":
+                        i += 1
+                        continue
+                    if i == 0:
+                        demandas_filas.append(int(line.strip()))
+                    elif i == 1:
+                        demandas_columnas.append(int(line.strip()))
+                    elif i == 2:
+                        barcos.append(int(line.strip()))
+
+            return barcos, demandas_filas, demandas_columnas
+        except FileNotFoundError:
+            print(f"El archivo {self.file} no fue encontrado.")
+            sys.exit(1)
+        except ValueError as e:
+            print(f"Error al convertir datos en el archivo: {e}")
+            sys.exit(1)
+        except Exception as e:
+            print(f"Ocurrió un error al leer el archivo: {e}")
+            sys.exit(1)
+
+if __name__ == "__main__":
+    if len(sys.argv) != 2:
+        print("Por favor, proporciona el archivo como parámetro.")
+        sys.exit(1)
+
+    archivo = sys.argv[1]
+
+    game_test = GameTest(archivo)
+
+    resultado = game_test.run_naval_battle()
+    print(f"Resultado del cumplimiento de la demanda: {resultado}")

@@ -35,6 +35,13 @@ class TestAlumnos(unittest.TestCase):
         resultado = obtener_ganador(monedas)
         resultado_test(resultado,34)
         self.assertEqual(resultado,34)
+
+    def test_valores_iguales_excepto_uno(self):
+        print("--------SE PRUEBA UN ARREGLO CON VALORES IGUALES EXCEPTO UNO--------")
+        monedas = obtener_monedas_de_archivo("excercise_1/pruebas_alumnos/arregloValoresIgualesExceptoUno.txt")
+        resultado = obtener_ganador(monedas)
+        resultado_test(resultado,12)
+        self.assertEqual(resultado,12)
     
     def test_arreglo_con_valores_maximos_en_los_extremos(self):
         print("--------SE PRUEBA UN ARREGLO CON VALORES MAXIMOS EN LOS EXTREMOS--------")
@@ -107,6 +114,7 @@ def suite():
 
     suite.addTest(TestAlumnos('test_arreglo_ordenado_ascendentemente'))
     suite.addTest(TestAlumnos('test_arreglo_ordenado_descendentemente'))
+    suite.addTest(TestAlumnos('test_valores_iguales_excepto_uno'))
     suite.addTest(TestAlumnos('test_arreglo_con_valores_maximos_en_los_extremos'))
     
     suite.addTest(TestCatedra('test_20_monedas'))

@@ -65,6 +65,14 @@ class TestCatedra(unittest.TestCase):
         print(f"{self._testMethodName} - Tiempo de ejecución: {duracion:.6f} segundos")  
         print()
 
+    def test_4_monedas(self):
+        print("--------SE PRUEBA UN ARREGLO DE 4 MONEDAS--------")
+        monedas = obtener_monedas_de_archivo("excercise_2/archivos_pruebas/4.txt")
+        resultado = maxima_ganancia_sofia(monedas)
+        suma_total = sum(resultado)
+        resultado_test(suma_total, 15)
+        self.assertEqual(suma_total, 15) 
+
     def test_5_monedas(self):
         print("--------SE PRUEBA UN ARREGLO DE 5 MONEDAS--------")
         monedas = obtener_monedas_de_archivo("excercise_2/archivos_pruebas/5.txt")
@@ -154,6 +162,7 @@ def suite():
     suite.addTest(TestAlumnos('test_caso_valores_grandes_en_extremos'))
     suite.addTest(TestAlumnos('test_caso_unico_valor_alto'))
 
+    suite.addTest(TestCatedra('test_4_monedas'))
     suite.addTest(TestCatedra('test_5_monedas'))
     suite.addTest(TestCatedra('test_10_monedas'))
     suite.addTest(TestCatedra('test_20_monedas'))

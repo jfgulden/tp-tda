@@ -49,6 +49,7 @@ class GameTest:
 
 
 class TestBacktraking(unittest.TestCase):
+
     def run(self, resultado=None):
         tiempo_inicio = time.time()  
         super().run(resultado)  
@@ -56,12 +57,14 @@ class TestBacktraking(unittest.TestCase):
         duracion = tiempo_final - tiempo_inicio  
         print(f"{self._testMethodName} - Tiempo de ejecución: {duracion:.6f} segundos")  
         print()
+
     def test_backtraking_3_3_2(self):
         print("--------SE PRUEBA ARCHIVO 3_3_2.txt--------")
         game = GameTest("3_3_2.txt")
         resultado = game.run_naval_battle()
         resultado_test(resultado,4)
         self.assertEqual(resultado, 4)
+        
     def test_backtraking_5_5_6(self):
         print("--------SE PRUEBA ARCHIVO 5_5_6.txt--------")
         game = GameTest("5_5_6.txt")

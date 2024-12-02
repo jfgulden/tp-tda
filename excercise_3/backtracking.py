@@ -257,7 +257,9 @@ def naval_battle_BT(
     for i in range(i_start, n):
         if board.demands_rows[i] == 0:
             continue
-        for j in range(j_start, m):
+        for j in range(0, m):
+            if i == i_start and j < j_start:
+                continue
             if board.demands_columns[j] == 0:
                 continue
             for orientation in [Orientation.Horizontal, Orientation.Vertical]:

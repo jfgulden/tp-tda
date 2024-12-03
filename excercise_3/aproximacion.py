@@ -3,18 +3,6 @@ import numpy as np
 import sys
 import time
 # excercise_3/archivos_pruebas
-FILES = [
-        "excercise_3/archivos_pruebas/TP3/3_3_2.txt",
-        "excercise_3/archivos_pruebas/TP3/5_5_6.txt",
-        "excercise_3/archivos_pruebas/TP3/8_7_10.txt",
-        "excercise_3/archivos_pruebas/TP3/10_3_3.txt",
-        "excercise_3/archivos_pruebas/TP3/10_10_10.txt",
-        "excercise_3/archivos_pruebas/TP3/12_12_21.txt",
-        "excercise_3/archivos_pruebas/TP3/15_10_15.txt",
-        "excercise_3/archivos_pruebas/TP3/20_20_20.txt",
-        "excercise_3/archivos_pruebas/TP3/20_25_30.txt",
-        "excercise_3/archivos_pruebas/TP3/30_25_25.txt",
-    ]
 
 
 def is_valid_placement(board, row, col, length, horizontal, demand_rows, demand_cols):

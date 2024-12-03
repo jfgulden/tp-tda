@@ -1,8 +1,6 @@
-import numpy as np
-
 import sys
 import time
-# excercise_3/archivos_pruebas
+import numpy as np
 
 
 def is_valid_placement(board, row, col, length, horizontal, demand_rows, demand_cols):
@@ -99,10 +97,10 @@ def naval_approximation(demands_rows, demands_cols, ships):
         if not placed:
             break
 
-    return sum(demands_rows) + sum(demands_cols)
+    return board
 
 
-def read_file(path):
+def parsear_archivo(path):
 
     with open(path, "r") as file:
         i = 0
@@ -126,26 +124,28 @@ def read_file(path):
     return demandas_filas, demandas_columnas, barcos
 
 
-        
-def calculate_time():
-    start_time = time.time()
-    barcos, demandas_filas, demandas_columnas = read_file(sys.argv[1])
-    demanda_incumplida = naval_approximation(barcos, demandas_filas, demandas_columnas)
-    demanda_cumplida = (
-        sum(demandas_filas) + sum(demandas_columnas) - demanda_incumplida
-    )
-    end_time = time.time()
-    print(f"Demanda total: {sum(demandas_filas) + sum(demandas_columnas)}")
-    print(f"Demanda cumplida: {demanda_cumplida}")
-    print(f"Demanda incumplida aproximada: {demanda_incumplida}")
-    print(f"Tiempo de ejecución: {end_time - start_time:.6f} segundos")
-
 if __name__ == "__main__":
+
     if len(sys.argv) != 2:
         print("La cantidad de argumentos es incorrecta")
         print("Uso: python3 aproximacion.py <archivo_prueba>")
         sys.exit()
-    calculate_time()
+
+    start_time = time.time()
+    demandas_filas, demandas_columnas, barcos = parsear_archivo(sys.argv[1])
+    print("Barcos:", barcos)
+    print("Demandas filas:", demandas_filas)
+    print("Demandas columnas:", demandas_columnas)
+    demanda_inicial = np.sum(demandas_filas) + np.sum(demandas_columnas)
+    result_board = naval_approximation(demandas_filas, demandas_columnas, barcos)
+    demanda_insatisfecha = np.sum(demandas_filas) + np.sum(demandas_columnas)
+    time_elapsed = time.time() - start_time
+
+    print()
+    print(f"Demanda insatisfecha: {demanda_insatisfecha}")
+    print(f"Demanda cumplida: {demanda_inicial - demanda_insatisfecha}")
+    print(f"Demanda inicial: {demanda_inicial}")
+    print(f"Tiempo de ejecución: {time_elapsed:.6f} segundos")
 
 
 # Analisis complejidad

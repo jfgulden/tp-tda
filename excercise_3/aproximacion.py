@@ -137,19 +137,7 @@ def read_file(path):
 
     return demandas_filas, demandas_columnas, barcos
 
-def calculate_demand():
-    for file in FILES:
-        file_name = file.split("/")[-1]
-        print(f"File: {file_name}")
-        demands_rows, demands_cols, ships = read_file(file)
-        demanda_inicial = np.sum(demands_rows) + np.sum(demands_cols)
-        result_board = naval_approximation(demands_rows, demands_cols, ships)
-        demanda_insatisfecha = np.sum(demands_rows) + np.sum(demands_cols)
-        print(f"\n{result_board}\n")
-        print(f"Demanda insatisfecha: {demanda_insatisfecha}")
-        print(f"Demanda cumplida: {demanda_inicial - demanda_insatisfecha}")
-        print(f"Demanda inicial: {demanda_inicial}")
-        print("======================================")
+
         
 def calculate_time():
     start_time = time.time()
@@ -165,12 +153,11 @@ def calculate_time():
     print(f"Tiempo de ejecución: {end_time - start_time:.6f} segundos")
 
 if __name__ == "__main__":
-    #if len(sys.argv) != 2:
-    #    print("La cantidad de argumentos es incorrecta")
-    #    print("Uso: python3 aproximacion.py <archivo_prueba>")
-    #    sys.exit()
-    calculate_demand()
-    #calculate_time()
+    if len(sys.argv) != 2:
+        print("La cantidad de argumentos es incorrecta")
+        print("Uso: python3 aproximacion.py <archivo_prueba>")
+        sys.exit()
+    calculate_time()
 
 
 # Analisis complejidad

@@ -216,8 +216,6 @@ def is_better_solution_possible(board, ships, current_ship, best_solution):
     ):
         return False
     return True
-
-
 def naval_battle(
     barcos: List[int], demands_rows: List[int], demands_columns: List[int]
 ):
@@ -308,6 +306,25 @@ def parsear_archivo(filepath: str) -> tuple[list[int], list[int], list[int]]:
 
     return barcos, demandas_filas, demandas_columnas
 
+def display_board(ocuppied_boxes: set, n: int, m: int):
+    print("\nTABLERO FINAL")
+    print("-------------\n")
+    print("X: casilla ocupada")
+    print("O: casilla libre\n")
+    board_str = "   "
+    for i in range(m):
+        board_str += f"{i} "
+        
+    board_str += "\n\n"
+    for i in range(n):
+        board_str += f"{i}  "
+        for j in range(m):
+            if (i, j) in ocuppied_boxes:
+                board_str += "X "
+            else:
+                board_str += "O "
+        board_str += "\n"
+    print(board_str)
 
 if __name__ == "__main__":
     
@@ -323,6 +340,7 @@ if __name__ == "__main__":
         sum(demands_rows) + sum(demands_columns) - resultado.remaining_demand
     )
     end_time = time.time()
+    display_board(resultado.ocuppied_boxes, len(demands_rows), len(demands_columns))
     print(f"Demanda total: {sum(demands_rows) + sum(demands_columns)}")
     print(f"Demanda cumplida: {demand_fullfilled}")
     print(f"Demanda incumplida: {resultado.remaining_demand}")

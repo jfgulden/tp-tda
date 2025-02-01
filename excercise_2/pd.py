@@ -42,9 +42,44 @@ def reconstruir_solucion(monedas, matriz, inicio, fin, solucion):
 
     solucion.append(monedas[inicio])
     if monedas[fin] >= monedas[inicio+1]:
-            return reconstruir_solucion(monedas, matriz, inicio+1, fin-1, solucion)   
+        return reconstruir_solucion(monedas, matriz, inicio+1, fin-1, solucion)   
     return reconstruir_solucion(monedas, matriz, inicio+2, fin, solucion) 
 
+
+def mostrar_pasos(solucion, monedas):
+    """
+    Muestra los pasos realizados por Sofia para obtener la máxima ganancia.
+    Complejidad: O(n), siendo n la cantidad de monedas.
+    """
+    
+    print("\nMONEDAS TOMADAS EN CADA TURNO")
+    print("-----------------------------\n")
+    inicio = 0
+    fin = len(solucion) - 1
+    i = 0
+    while inicio < fin:
+        print("Monedas restantes: ", monedas[inicio:fin+1])
+        if monedas[fin] == solucion[i]:
+            print(f"Sofia toma la moneda {monedas[fin]}")
+            fin -= 1
+        else:
+            print(f"Sofia toma la moneda {monedas[inicio]}")
+            inicio += 1
+            
+        i += 1
+        if inicio > fin:
+            break
+        
+        if monedas[fin] > monedas[inicio]:
+            print(f"Mateo toma la moneda {monedas[fin]}\n")
+            fin -= 1
+        else:
+            print(f"Mateo toma la moneda {monedas[inicio]}\n")
+            inicio += 1
+        
+        
+            
+        
 
 def maxima_ganancia_sofia(monedas):
     """
@@ -76,6 +111,7 @@ def maxima_ganancia_sofia(monedas):
 
     solucion = []
     reconstruir_solucion(monedas, matriz_solucion, 0, n-1, solucion)
+    mostrar_pasos(solucion, monedas)
     return solucion
 
 if __name__ == "__main__":
@@ -89,6 +125,7 @@ if __name__ == "__main__":
     start_time = time.time()
     solucion = maxima_ganancia_sofia(monedas)
     end_time = time.time()
+    print("\n- - - - - - - - - - - - - - - - - - - - - - - - - - - - -\n")
     print(f"Monedas sacadas por Sofia: {solucion}")
     print(f"Monto obtenido por Sofia: {sum(solucion)}")
     print(f"Tiempo de ejecución: {end_time - start_time:.6f} segundos")

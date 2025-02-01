@@ -1,6 +1,6 @@
 import sys
 import time
-def obtener_ganador(monedas):
+def maxima_ganancia_sofia(monedas):
     # Turno Sophia: Agarra la moneda más grande
     # Turno Mateo: Agarra la moneda más chica
     inicio = 0
@@ -11,19 +11,24 @@ def obtener_ganador(monedas):
         primera = monedas[inicio]
         ultima = monedas[fin]
         if i % 2 == 0:
+            print(f"Monedas restantes: {monedas[inicio:fin+1]}")
             if primera > ultima:
                 monedas_sofia.append(primera)
                 inicio += 1
+                print(f"Sofia toma la moneda {primera}")
             else:
                 monedas_sofia.append(ultima)
                 fin -= 1
+                print(f"Sofia toma la moneda {primera}")
         else:
             if primera >= ultima:
                 fin -= 1
+                print(f"Mateo toma la moneda {ultima}\n")
             else:
                 inicio += 1
+                print(f"Mateo toma la moneda {primera}\n")
 
-    return sum(monedas_sofia)
+    return monedas_sofia
 
 def obtener_monedas_de_archivo(file: str):
     file = open(file, "r")
@@ -40,9 +45,11 @@ if __name__ == "__main__":
     try:
         monedas = obtener_monedas_de_archivo(archivo)
         start_time = time.time()
-        resultado = obtener_ganador(monedas)
+        monedas_sofia = maxima_ganancia_sofia(monedas)
         end_time = time.time()
-        print(f"Monto obtenido por Sofia: {resultado}")
+        print("\n- - - - - - - - - - - - - - - - - - - - - - - - - - - - -\n")
+        print(f"Monedas sacadas por Sofia: {monedas_sofia}")
+        print(f"Monto obtenido por Sofia: {sum(monedas_sofia)}")
         print(f"Tiempo de ejecución: {end_time - start_time:.6f} segundos")
     except Exception as e:
         print(f"Error al procesar el archivo: {e}")

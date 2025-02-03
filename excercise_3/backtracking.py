@@ -47,9 +47,10 @@ class Tablero:
         self.m = m
         self.demands_rows = demands_rows
         self.demands_columns = demands_columns
-        self.ocuppied_boxes: set = set()
+        self.placed_positions = {}
+        self.occupied_boxes = set()
 
-    def position_ship(self, ship: Ship, i: int, j: int):
+    def position_ship(self, ship: Ship, i: int, j: int, ship_pos: int):
         boxes = ship.get_boxes_to_occupy(i, j)
         if ship.orientation == Orientation.Horizontal:
             if len(boxes) > self.demands_rows[i]:
@@ -59,7 +60,7 @@ class Tablero:
                 return False
 
         for box in boxes:
-            if box in self.ocuppied_boxes:
+            if box in self.occupied_boxes:
                 return False
             x = box[0]
             y = box[1]
@@ -88,8 +89,13 @@ class Tablero:
                 Corner.Top, boxes[-1][0], boxes[-1][1]
             ):
                 return False
+            
+        if ship_pos not in self.placed_positions:
+            self.placed_positions[ship_pos] = set()
+            
         for box in boxes:
-            self.ocuppied_boxes.add(box)
+            self.placed_positions[ship_pos].add(box)
+            self.occupied_boxes.add(box)
             self.demands_rows[box[0]] -= 1
             self.demands_columns[box[1]] -= 1
         return True
@@ -102,13 +108,13 @@ class Tablero:
                                     i: int,
                                     j: int):
         if orientation == Orientation.Horizontal:
-            if ((i - 1, j) in self.ocuppied_boxes) or (
-                ((i + 1, j) in self.ocuppied_boxes)
+            if ((i - 1, j) in self.occupied_boxes) or (
+                ((i + 1, j) in self.occupied_boxes)
             ):
                 return True
         else:
-            if ((i, j - 1) in self.ocuppied_boxes) or (
-                ((i, j + 1) in self.ocuppied_boxes)
+            if ((i, j - 1) in self.occupied_boxes) or (
+                ((i, j + 1) in self.occupied_boxes)
             ):
                 return True
 
@@ -118,38 +124,39 @@ class Tablero:
                                                j: int):
         if corner == Corner.Top:
             if (
-                (self.n and (i + 1, j - 1) in self.ocuppied_boxes)
-                or (self.m and (i + 1, j + 1) in self.ocuppied_boxes)
-                or (self.n and (i + 1, j) in self.ocuppied_boxes)
+                (self.n and (i + 1, j - 1) in self.occupied_boxes)
+                or (self.m and (i + 1, j + 1) in self.occupied_boxes)
+                or (self.n and (i + 1, j) in self.occupied_boxes)
             ):
                 return True
         elif corner == Corner.Botton:
             if (
-                (self.n and (i - 1, j - 1) in self.ocuppied_boxes)
-                or (self.m and (i - 1, j + 1) in self.ocuppied_boxes)
-                or (self.n and (i - 1, j) in self.ocuppied_boxes)
+                (self.n and (i - 1, j - 1) in self.occupied_boxes)
+                or (self.m and (i - 1, j + 1) in self.occupied_boxes)
+                or (self.n and (i - 1, j) in self.occupied_boxes)
             ):
                 return True
         elif corner == Corner.Left:
             if (
-                (self.n and (i - 1, j - 1) in self.ocuppied_boxes)
-                or (self.m and (i + 1, j - 1) in self.ocuppied_boxes)
-                or (self.m and (i, j - 1) in self.ocuppied_boxes)
+                (self.n and (i - 1, j - 1) in self.occupied_boxes)
+                or (self.m and (i + 1, j - 1) in self.occupied_boxes)
+                or (self.m and (i, j - 1) in self.occupied_boxes)
             ):
                 return True
         elif corner == Corner.Right:
             if (
-                (self.n and (i - 1, j + 1) in self.ocuppied_boxes)
-                or (self.m and (i + 1, j + 1) in self.ocuppied_boxes)
-                or (self.m and (i, j + 1) in self.ocuppied_boxes)
+                (self.n and (i - 1, j + 1) in self.occupied_boxes)
+                or (self.m and (i + 1, j + 1) in self.occupied_boxes)
+                or (self.m and (i, j + 1) in self.occupied_boxes)
             ):
                 return True
         return False
 
-    def remove_ship(self, ship: Ship, i: int, j: int):
+    def remove_ship(self, ship: Ship, i: int, j: int, ship_pos: int):
         boxes = ship.get_boxes_to_occupy(i, j)
+        self.placed_positions.pop(ship_pos)
         for box in boxes:
-            self.ocuppied_boxes.remove(box)
+            self.occupied_boxes.remove(box)
             self.demands_rows[box[0]] += 1
             self.demands_columns[box[1]] += 1
 
@@ -158,7 +165,7 @@ class Tablero:
         for i in range(self.n):
             board_str += f"{self.demands_rows[i]}| "
             for j in range(self.m):
-                if (i, j) in self.ocuppied_boxes:
+                if (i, j) in self.occupied_boxes:
                     board_str += "X "
                 else:
                     board_str += "O "
@@ -177,31 +184,34 @@ class Tablero:
 
 class BestSolution:
     def __init__(self):
-        self.ocuppied_boxes = set()
+        self.placed_positions = {}
+        self.occupied_boxes = set()
         self.remaining_demand = float("inf")
 
     def update_solution(self, board: Tablero):
-        self.ocuppied_boxes = board.ocuppied_boxes.copy()
+        self.occupied_boxes = board.occupied_boxes.copy()
         self.remaining_demand = board.get_available_demand()
+        self.placed_positions = board.placed_positions.copy()
 
     def compare_solution(self, board: Tablero):
         if board.get_available_demand() < self.remaining_demand:
-            self.ocuppied_boxes = board.ocuppied_boxes.copy()
+            self.occupied_boxes = board.occupied_boxes.copy()
             self.remaining_demand = board.get_available_demand()
+            self.placed_positions = board.placed_positions.copy()
             return True
         return False
 
     def __str__(self):
-        ocuppied_boxes = f"Ocuppied boxes: {self.ocuppied_boxes}\n"
+        occupied_boxes = f"occupied boxes: {self.occupied_boxes}\n"
         remaining_demand = f"Remaining demand: {self.remaining_demand}"
-        return ocuppied_boxes + remaining_demand
+        return occupied_boxes + remaining_demand
 
 
 def is_better_solution_possible(board, ships, current_ship, best_solution):
     remaining_ships = sum(ships[current_ship:])
     best_atteinable_solution = board.get_available_demand() - remaining_ships * 2
     if (
-        len(best_solution.ocuppied_boxes) > 0
+        len(best_solution.occupied_boxes) > 0
         and best_atteinable_solution >= best_solution.remaining_demand
     ):
         return False
@@ -211,7 +221,7 @@ def is_better_solution_possible(board, ships, current_ship, best_solution):
             board.get_available_demand() - sum(valid_ships) * 2
         )
     if (
-        len(best_solution.ocuppied_boxes) > 0
+        len(best_solution.occupied_boxes) > 0
         and best_atteinable_solution >= best_solution.remaining_demand
     ):
         return False
@@ -258,7 +268,6 @@ def naval_battle_BT(
     for i in range(i_start, n):
         if board.demands_rows[i] == 0:
             continue
-        range_j = range(j_start, m) if i == i_start else range(0, m)
         for j in range(0, m):
             if i == i_start and j < j_start:
                 continue
@@ -266,7 +275,7 @@ def naval_battle_BT(
                 continue
             for orientation in [Orientation.Horizontal, Orientation.Vertical]:
                 ship_i_j = Ship(ship, orientation)
-                if board.position_ship(ship_i_j, i, j):
+                if board.position_ship(ship_i_j, i, j, current_ship):
                     if (
                         len(ships) > current_ship + 1
                         and ships[current_ship + 1] == ship
@@ -278,7 +287,7 @@ def naval_battle_BT(
                         naval_battle_BT(
                             board, ships, current_ship + 1, best_solution
                         )
-                    board.remove_ship(ship_i_j, i, j)
+                    board.remove_ship(ship_i_j, i, j, current_ship)
 
     while current_ship < len(ships) and ships[current_ship] == ship:
         current_ship += 1
@@ -306,24 +315,27 @@ def parsear_archivo(filepath: str) -> tuple[list[int], list[int], list[int]]:
 
     return barcos, demandas_filas, demandas_columnas
 
-def display_board(ocuppied_boxes: set, n: int, m: int):
-    print("\nTABLERO FINAL")
-    print("-------------\n")
-    print("X: casilla ocupada")
+def display_board(best_sol: BestSolution, ships: List[int], n: int, m: int):
+    print()
+    for i, ship in enumerate(ships):
+        if i in best_sol.placed_positions:
+            print(f"Barco {i} de tamaño {ship}: {best_sol.placed_positions[i]}")
+        else:
+            print(f"Barco {i} de tamaño {ship}: No fue colocado")
+           
+    print("\nDispoción de los barcos en el tablero:")
+    print("\nX: casilla ocupada")
     print("O: casilla libre\n")
-    board_str = "   "
-    for i in range(m):
-        board_str += f"{i} "
-        
-    board_str += "\n\n"
+    board_str = "   " + " ".join(f"{i:2}" for i in range(m)) + "\n\n"
+
     for i in range(n):
-        board_str += f"{i}  "
+        board_str += f"{i:2} "
         for j in range(m):
-            if (i, j) in ocuppied_boxes:
-                board_str += "X "
-            else:
-                board_str += "O "
+            X = f"{' X' if n <= 10 else ' X '}"
+            O = f"{' O' if n <= 10 else ' O '}"
+            board_str += X if (i, j) in best_sol.occupied_boxes else O
         board_str += "\n"
+        
     print(board_str)
 
 if __name__ == "__main__":
@@ -339,8 +351,8 @@ if __name__ == "__main__":
     demand_fullfilled = (
         sum(demands_rows) + sum(demands_columns) - resultado.remaining_demand
     )
-    end_time = time.time()
-    display_board(resultado.ocuppied_boxes, len(demands_rows), len(demands_columns))
+    end_time = time.time()  
+    display_board(resultado, barcos, len(demands_rows), len(demands_columns))
     print(f"Demanda total: {sum(demands_rows) + sum(demands_columns)}")
     print(f"Demanda cumplida: {demand_fullfilled}")
     print(f"Demanda incumplida: {resultado.remaining_demand}")

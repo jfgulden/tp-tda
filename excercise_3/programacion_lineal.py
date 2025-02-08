@@ -1,7 +1,9 @@
 import time
 import pulp
-from typing import List
-import os  
+from typing import List, Tuple
+import os
+import numpy as np
+
 
 def parsear_archivo(
     archivo: str,
@@ -266,7 +268,7 @@ def batalla_naval_pl(barcos, demandas_filas, demandas_columnas):
                         problema += pos_barcos[i, l, x, y, o] == 0
 
     # Resolver el problema
-    problema.solve()
+    problema.solve(pulp.PULP_CBC_CMD(msg=False))
 
     # convert tablero into a matrix
     tablero = [[tablero[x, y].varValue for y in range(columnas)] for x in range(filas)]

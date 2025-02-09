@@ -34,6 +34,7 @@ sudo apt-get install python3
 
 Cada carpeta contiene los tests realizados para la parte correspondiente.
 Para ejecutar los tests, tiene dos opciones diferentes:
+
 - **Opción 1**: se provee un archivo `main.py` en el cual,al ejecutarlo con el comando `python3 main.py` se despliega un menú con los tests de la cátedra y de los alumnos con sus algoritmos correspondientes.
 - **Opción 2**: simplemente se debe correr el archivo `tests.py` en cada carpeta. Se detallarán las instrucciones específicas para cada parte a continuación.
 
@@ -69,7 +70,7 @@ python3 excercise_2/test_pd.py
 
 Este comando correrá los tests provistos por la cátedra y los tests adicionales que realizamos.
 
-De la misma manera, para correr el algoritmo implementado, se debe ejecutar el siguiente comando en la terminal, al que se le debe pasar como argumento el archivo de entrada. Dicho archivo debe contener todas las monedas en el orden deseado separadas entre sí única y exclusivamente por un `;` en la primera línea del archivo:
+De la misma manera, para correr el algoritmo de programación dinámica implementado, se debe ejecutar el siguiente comando en la terminal, al que se le debe pasar como argumento el archivo de entrada. Dicho archivo debe contener todas las monedas en el orden deseado separadas entre sí única y exclusivamente por un `;` en la primera línea del archivo:
 
 ```python
 python3 excercise_2/pd.py <archivo>
@@ -79,7 +80,7 @@ Este comando correrá el algoritmo implementado.
 
 ### Ejecución parte 3
 
-#### Programación Dinámica
+#### Backtracking
 
 Para correr las pruebas de la parte 3, se debe ejecutar el siguiente comando en la terminal:
 
@@ -118,6 +119,22 @@ Este validador se utilizó para demostrar que el problema de la batalla naval es
 
 ```python
 python3 excercise_3/validador.py <archivo>
+```
+
+#### Algoritmo de John Jellicoe
+
+Para correr el algoritmo de John Jellicoe, se debe ejecutar el siguiente comando en la terminal, al que se le debe pasar como argumento el archivo de entrada, con el mismo formato que el archivo de Programación Dinámica.
+
+```python
+python3 excercise_3/aproximacion.py <archivo>
+```
+
+#### ALgoritmo de aproximación Greedy (opcional)
+
+Para correr el algoritmo de aproximación Greedy, se debe ejecutar el siguiente comando en la terminal, al que se le debe pasar como argumento el archivo de entrada, con el mismo formato que el archivo de Programación Dinámica.
+
+```python
+python3 excercise_3/greedy.py <archivo>
 ```
 
 #### Programación Lineal
